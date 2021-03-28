@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/dao/postgres"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"log"
@@ -17,17 +18,23 @@ type App struct {
 func main() {
 	app := App{}
 
-	err := app.Initialize()
+	err := app.initialize()
 	if err != nil {
 		log.Fatalf("Could not initialize app: %v", err)
 	}
+
+	err = dbInitialize()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	err = app.Run()
 	if err != nil {
 		log.Fatalf("Could not run app: %v", err)
 	}
 }
 
-func (a *App) Initialize() error {
+func (a *App) initialize() error {
 	a.e = echo.New()
 
 	// Middleware
@@ -54,5 +61,16 @@ func (a *App) Run() error {
 	if err := a.e.Shutdown(ctx); err != nil {
 		a.e.Logger.Fatal(err)
 	}
+	return nil
+}
+
+func dbInitialize() error {
+	conn := postgres.Connection{}
+	err := conn.ConnectDB()
+	if err != nil {
+		log.Fatalf("Could not connect to postgres: %v", err)
+	}
+	err = conn.PrepareDB()
+
 	return nil
 }
