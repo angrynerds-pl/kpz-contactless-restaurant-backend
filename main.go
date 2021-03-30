@@ -2,9 +2,12 @@ package main
 
 import (
 	"context"
+	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api"
 	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/dao/postgres"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"gorm.io/gorm"
 	"log"
 	"os"
 	"os/signal"
@@ -16,16 +19,16 @@ type App struct {
 }
 
 func main() {
-	app := App{}
-
-	err := app.initialize()
+	err := godotenv.Load()
 	if err != nil {
-		log.Fatalf("Could not initialize app: %v", err)
+		log.Fatalf("Could not load env variables: %v", err)
 	}
 
-	err = dbInitialize()
+	app := App{}
+
+	err = app.initialize()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Could not initialize app: %v", err)
 	}
 
 	err = app.Run()
@@ -40,6 +43,16 @@ func (a *App) initialize() error {
 	// Middleware
 	a.e.Use(middleware.Logger())
 	a.e.Use(middleware.Recover())
+
+	dbS, err := dbInitialize()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = api.SetRouters(a.e, dbS)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -64,13 +77,16 @@ func (a *App) Run() error {
 	return nil
 }
 
-func dbInitialize() error {
+func dbInitialize() (*gorm.DB, error) {
 	conn := postgres.Connection{}
 	err := conn.ConnectDB()
 	if err != nil {
 		log.Fatalf("Could not connect to postgres: %v", err)
 	}
 	err = conn.PrepareDB()
+	if err != nil {
+		return nil, err
+	}
 
-	return nil
+	return conn.Db, nil
 }

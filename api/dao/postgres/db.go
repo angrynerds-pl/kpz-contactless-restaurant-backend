@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/model"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -34,7 +35,10 @@ func (c *Connection) ConnectDB() error {
 }
 
 func (c *Connection) PrepareDB() error {
-	err := c.Db.AutoMigrate()
+	err := c.Db.AutoMigrate(
+		&model.User{},
+		&model.Role{},
+	)
 	if err != nil {
 		return err
 	}
