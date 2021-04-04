@@ -1,4 +1,4 @@
-package postgres
+package db
 
 import (
 	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/model"
@@ -8,12 +8,7 @@ import (
 	"os"
 )
 
-type Connection struct {
-	Db *gorm.DB
-}
-
-//ConnectDB inits the database connection
-func (c *Connection) ConnectDB() error {
+func New() *gorm.DB {
 	err := godotenv.Load()
 
 	dsn := os.Getenv("DB_DSN")
@@ -30,17 +25,28 @@ func (c *Connection) ConnectDB() error {
 	if err != nil {
 		panic("DB connection Error")
 	}
-	c.Db = db
-	return nil
+	return db
 }
 
-func (c *Connection) PrepareDB() error {
-	err := c.Db.AutoMigrate(
+//func TestDB() *gorm.DB {
+//	db, err := gorm.Open("sqlite3", "./../realworld_test.db")
+//	if err != nil {
+//		fmt.Println("storage err: ", err)
+//	}
+//	db.DB().SetMaxIdleConns(3)
+//	db.LogMode(false)
+//	return db
+//}
+//
+//func DropTestDB() error {
+//	if err := os.Remove("./../realworld_test.db"); err != nil {
+//		return err
+//	}
+//	return nil
+//}
+
+func AutoMigrate(db *gorm.DB) error {
+	return db.AutoMigrate(
 		&model.User{},
-		&model.Role{},
 	)
-	if err != nil {
-		return err
-	}
-	return err
 }
