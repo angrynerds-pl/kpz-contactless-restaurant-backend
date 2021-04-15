@@ -2,15 +2,12 @@ package db
 
 import (
 	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/model"
-	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"os"
 )
 
 func New() *gorm.DB {
-	err := godotenv.Load()
-
 	dsn := os.Getenv("DB_DSN")
 
 	db, err := gorm.Open(postgres.New(postgres.Config{

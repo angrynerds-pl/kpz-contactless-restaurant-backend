@@ -17,7 +17,7 @@ import (
 //func main() {
 //	err := godotenv.Load()
 //	if err != nil {
-//		log.Fatalf("Could not load env variables: %v", err)
+//		log.Fatalf("Could not load .env variables: %v", err)
 //	}
 //
 //	app := App{}
@@ -88,10 +88,6 @@ import (
 //}
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Cannot read .env. Err = %v", err)
-	}
 
 	r := router.New()
 
