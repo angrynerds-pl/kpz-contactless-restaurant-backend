@@ -5,7 +5,6 @@ import (
 	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/handler"
 	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/router"
 	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/store"
-	"github.com/joho/godotenv"
 	echoSwagger "github.com/swaggo/echo-swagger" // echo-swagger middleware
 	"log"
 )
@@ -17,7 +16,7 @@ import (
 //func main() {
 //	err := godotenv.Load()
 //	if err != nil {
-//		log.Fatalf("Could not load env variables: %v", err)
+//		log.Fatalf("Could not load .env variables: %v", err)
 //	}
 //
 //	app := App{}
@@ -88,10 +87,6 @@ import (
 //}
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Cannot read .env. Err = %v", err)
-	}
 
 	r := router.New()
 
@@ -108,5 +103,5 @@ func main() {
 	us := store.NewUserStore(d)
 	h := handler.NewHandler(us)
 	h.Register(v1)
-	r.Logger.Fatal(r.Start("127.0.0.1:8585"))
+	r.Logger.Fatal(r.Start(":8585"))
 }
