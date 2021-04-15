@@ -5,7 +5,6 @@ import (
 	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/handler"
 	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/router"
 	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/store"
-	"github.com/joho/godotenv"
 	echoSwagger "github.com/swaggo/echo-swagger" // echo-swagger middleware
 	"log"
 )
