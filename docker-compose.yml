@@ -3,7 +3,6 @@ version: "3.8"
 services:
   database:
     image: postgres
-    restart: always
     env_file:
       - ./.env
     ports:
@@ -21,8 +20,6 @@ services:
     env_file: ./.env
     depends_on:
       - database
-    networks:
-      - default
     ports:
       - "8585:8585"
 
