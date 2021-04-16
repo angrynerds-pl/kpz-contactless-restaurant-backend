@@ -8,8 +8,13 @@ import (
 
 // gorm.Model definition
 type Base struct {
-	ID        uuid.UUID `sql:"type:uuid;primary_key;default:uuid_generate_v4()"`
+	ID        uuid.UUID `gorm:"type:uuid;primary_key"` //<-:create
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
+}
+
+func (b *Base) BeforeCreate(tx *gorm.DB) (err error) {
+	b.ID = uuid.NewV4()
+	return
 }
