@@ -8,6 +8,16 @@ import (
 	"net/http"
 )
 
+// Signup
+// @Summary Register new user
+// @Description Register new user in server
+// @Tags Guest user
+// @Accept  json
+// @Produce  json
+// @Param User body userRegisterRequest true "User credentials"
+// @Success 200 {object} userResponse
+// @Failure default {object} utils.Error
+// @Router /users [post]
 func (h *Handler) SignUp(c echo.Context) error {
 	var u model.User
 	req := &userRegisterRequest{}
@@ -24,6 +34,16 @@ func (h *Handler) SignUp(c echo.Context) error {
 	return c.JSON(http.StatusCreated, rsp)
 }
 
+// Login
+// @Summary Login to service
+// @Description Login to service using given credentials
+// @Tags Guest user
+// @Accept  json
+// @Produce  json
+// @Param User body userLoginRequest true "User credentials"
+// @Success 200 {object} userResponse
+// @Failure default {object} utils.Error
+// @Router /users/login [post]
 func (h *Handler) Login(c echo.Context) error {
 	req := &userLoginRequest{}
 	if err := req.bind(c); err != nil {

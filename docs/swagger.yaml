@@ -1,0 +1,124 @@
+basePath: /v1
+definitions:
+  handler.userLoginRequest:
+    properties:
+      user:
+        properties:
+          email:
+            type: string
+          password:
+            type: string
+        required:
+        - email
+        - password
+        type: object
+    type: object
+  handler.userRegisterRequest:
+    properties:
+      user:
+        properties:
+          email:
+            type: string
+          password:
+            type: string
+          username:
+            type: string
+        required:
+        - email
+        - password
+        type: object
+    type: object
+  handler.userResponse:
+    properties:
+      user:
+        properties:
+          email:
+            type: string
+          role:
+            type: string
+          token:
+            type: string
+          username:
+            type: string
+        required:
+        - token
+        type: object
+    type: object
+  utils.Error:
+    properties:
+      errors:
+        additionalProperties: true
+        type: object
+    type: object
+host: localhost:8585
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a Restaurant backend RESTful API documentation.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Restaurant backend API server
+  version: 0.1.0
+paths:
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Register new user in server
+      parameters:
+      - description: User credentials
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/handler.userRegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.userResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/utils.Error'
+      summary: Register new user
+      tags:
+      - Guest user
+  /users/login:
+    post:
+      consumes:
+      - application/json
+      description: Login to service using given credentials
+      parameters:
+      - description: User credentials
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/handler.userLoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.userResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/utils.Error'
+      summary: Login to service
+      tags:
+      - Guest user
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"
+x-extension-openapi:
+  example: value on a json format
