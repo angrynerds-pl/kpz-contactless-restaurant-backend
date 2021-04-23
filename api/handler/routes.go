@@ -9,11 +9,14 @@ import (
 func (h *Handler) Register(v1 *echo.Group) {
 	jwtMiddleware := middleware.JWT(utils.JWTSecret)
 
-	guestUsers := v1.Group("/users")
+	guestUsers := v1.Group("/auth")
 	guestUsers.POST("", h.SignUp)
+	guestUsers.POST("/customer", h.SignUpCustomer)
+	guestUsers.POST("/owner", h.SignUpOwner)
 	guestUsers.POST("/login", h.Login)
 
-	user := v1.Group("/user", jwtMiddleware)
+	user := v1.Group("/users", jwtMiddleware)
 	user.GET("", h.CurrentUser)
 	user.PUT("", h.UpdateUser)
+	user.DELETE("", h.DeleteUser)
 }

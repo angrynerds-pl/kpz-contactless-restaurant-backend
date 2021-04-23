@@ -10,4 +10,5 @@ type Store interface {
 	GetByEmail(string) (*model.User, error)
 	Create(*model.User) error
 	Update(*model.User) error
+	Delete(user *model.User) error
 }

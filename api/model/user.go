@@ -30,7 +30,7 @@ type RoleName int
 
 const (
 	admin RoleName = iota
-	client
+	customer
 	owner
 	manager
 	employee

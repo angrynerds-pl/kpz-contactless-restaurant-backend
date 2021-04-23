@@ -7,9 +7,9 @@ import (
 
 type userUpdateRequest struct {
 	User struct {
-		Username string `json:"username"`
-		Email    string `json:"email" validate:"email"`
-		Password string `json:"password"`
+		Username string `param:"username" query:"username" form:"username" json:"username" xml:"username validate:"required"`
+		Email    string `param:"email" query:"email" form:"email" json:"email" xml:"email" validate:"required,email"`
+		Password string `param:"password" query:"password" form:"password" json:"password" xml:"password" validate:"required"`
 	} `json:"user"`
 }
 
@@ -81,5 +81,16 @@ func (r *userLoginRequest) bind(c echo.Context) error {
 	if err := c.Validate(r); err != nil {
 		return err
 	}
+	return nil
+}
+
+type userDeleteRequest struct {
+}
+
+func newUserDeleteRequest() *userDeleteRequest {
+	return &userDeleteRequest{}
+}
+
+func (r *userDeleteRequest) bind(c echo.Context) error {
 	return nil
 }

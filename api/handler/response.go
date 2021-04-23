@@ -6,11 +6,12 @@ import (
 )
 
 type userResponse struct {
-	User struct {
+	Token string
+	User  struct {
 		Username string `param:"username" query:"username" form:"username" json:"username" xml:"username"`
 		Email    string `param:"email" query:"email" form:"email" json:"email" xml:"email"`
 		Role     string `param:"role" query:"role" form:"role" json:"role" xml:"role"`
-		Token    string `param:"token" query:"token" form:"token" json:"token" xml:"token" validate:"required"`
+		//Token    string `param:"token" query:"token" form:"token" json:"token" xml:"token" validate:"required"`
 	} `json:"user"`
 }
 
@@ -22,7 +23,7 @@ func newUserResponse(u *model.User) (*userResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	r.User.Token = token
-
+	//r.User.Token = token
+	r.Token = token
 	return r, nil
 }
