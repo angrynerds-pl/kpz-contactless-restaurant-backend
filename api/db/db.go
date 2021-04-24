@@ -1,13 +1,13 @@
 package db
 
 import (
-	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"os"
 )
 
-func New() *gorm.DB {
+func New() (*gorm.DB, error) {
 	dsn := os.Getenv("DB_DSN")
 
 	db, err := gorm.Open(postgres.New(postgres.Config{
@@ -19,10 +19,17 @@ func New() *gorm.DB {
 			PrepareStmt: true,
 		},
 	)
-	if err != nil {
-		panic("DB connection Error")
+
+	if debug := os.Getenv("DEBUG"); debug == "true" {
+		db.Logger = db.Logger.LogMode(logger.Info)
+	} else if debug == "false" {
+		db.Logger = db.Logger.LogMode(logger.Silent)
 	}
-	return db
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
 }
 
 //func TestDB() *gorm.DB {
@@ -44,6 +51,6 @@ func New() *gorm.DB {
 
 func AutoMigrate(db *gorm.DB) error {
 	return db.AutoMigrate(
-		&model.User{},
+		"public.users",
 	)
 }

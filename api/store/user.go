@@ -37,5 +37,9 @@ func (us *UserStore) Create(u *model.User) (err error) {
 }
 
 func (us *UserStore) Update(u *model.User) error {
-	return us.db.Model(u).Updates(u).Error
+	return us.db.Model(u).Where("id = ?", u.ID.String()).Updates(u).Error
+}
+
+func (us *UserStore) Delete(u *model.User) error {
+	return us.db.Delete(u).Error
 }
