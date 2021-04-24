@@ -29,11 +29,16 @@ func (h *Handler) SignUp(c echo.Context) error {
 	if err := h.userStore.Create(&u); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
-	rsp, err := newUserResponse(&u)
+
+	token, err := utils.GenerateJWT(u.ID, u.Role)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	rsp, err := newTokenResponse(token)
 	if err != nil {
 		return err
 	}
-	return c.JSON(http.StatusCreated, rsp)
+	return c.JSON(http.StatusOK, rsp)
 }
 
 // Signup
@@ -43,7 +48,7 @@ func (h *Handler) SignUp(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param User body userRegisterRequest true "User credentials"
-// @Success 200 {object} userResponse
+// @Success 200 {object} tokenResponse
 // @Failure default {object} utils.Error
 // @Router /auth/customer [post]
 func (h *Handler) SignUpCustomer(c echo.Context) error {
@@ -56,11 +61,16 @@ func (h *Handler) SignUpCustomer(c echo.Context) error {
 	if err := h.userStore.Create(&u); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
-	rsp, err := newUserResponse(&u)
+
+	token, err := utils.GenerateJWT(u.ID, u.Role)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	rsp, err := newTokenResponse(token)
 	if err != nil {
 		return err
 	}
-	return c.JSON(http.StatusCreated, rsp)
+	return c.JSON(http.StatusOK, rsp)
 }
 
 // Signup
@@ -70,7 +80,7 @@ func (h *Handler) SignUpCustomer(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param User body userRegisterRequest true "User credentials"
-// @Success 200 {object} userResponse
+// @Success 200 {object} tokenResponse
 // @Failure default {object} utils.Error
 // @Router /auth/owner [post]
 func (h *Handler) SignUpOwner(c echo.Context) error {
@@ -89,9 +99,11 @@ func (h *Handler) SignUpOwner(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	return c.JSON(http.StatusOK, map[string]string{
-		"token": token,
-	})
+	rsp, err := newTokenResponse(token)
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, rsp)
 }
 
 //rsp, err := newUserResponse(&u)
@@ -107,7 +119,7 @@ func (h *Handler) SignUpOwner(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param User body userLoginRequest true "User credentials"
-// @Success 200 {object} userResponse
+// @Success 200 {object} tokenResponse
 // @Failure default {object} utils.Error
 // @Router /users/login [post]
 func (h *Handler) Login(c echo.Context) error {
@@ -130,15 +142,12 @@ func (h *Handler) Login(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	return c.JSON(http.StatusOK, map[string]string{
-		"token": token,
-	})
 
-	//rsp, err := newUserResponse(u)
-	//if err != nil {
-	//	return err
-	//}
-	//return c.JSON(http.StatusOK, rsp)
+	rsp, err := newTokenResponse(token)
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, rsp)
 }
 
 // CurrentUser
@@ -152,7 +161,6 @@ func (h *Handler) Login(c echo.Context) error {
 // @Failure default {object} utils.Error
 // @Router /users [get]
 func (h *Handler) CurrentUser(c echo.Context) error {
-	c.Logger().Info("aaaaaaaa")
 	userId, err := userIDFromToken(c)
 	if err != nil {
 		return err
