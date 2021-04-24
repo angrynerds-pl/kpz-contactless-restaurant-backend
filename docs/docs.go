@@ -33,7 +33,7 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/users": {
+        "/auth/customer": {
             "post": {
                 "description": "Register new user in server",
                 "consumes": [
@@ -45,7 +45,164 @@ var doc = `{
                 "tags": [
                     "Guest user"
                 ],
-                "summary": "Register new user",
+                "summary": "Register new user with customer role",
+                "parameters": [
+                    {
+                        "description": "User credentials",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.userRegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.tokenResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/owner": {
+            "post": {
+                "description": "Register new user in server",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Guest user"
+                ],
+                "summary": "Register new user with owner role",
+                "parameters": [
+                    {
+                        "description": "User credentials",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.userRegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.tokenResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "description": "Get User by id in token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get User by id in token",
+                "parameters": [
+                    {
+                        "description": "User credentials",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.userLoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.userResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Error"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update User by id in token. It can update",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update user by id  in token",
+                "parameters": [
+                    {
+                        "description": "User credentials",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.userLoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.userResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Register new user in server",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Guest user"
+                ],
+                "summary": "Register new user with owner role",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "User credentials",
@@ -101,7 +258,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.userResponse"
+                            "$ref": "#/definitions/handler.tokenResponse"
                         }
                     },
                     "default": {
@@ -115,6 +272,14 @@ var doc = `{
         }
     },
     "definitions": {
+        "handler.tokenResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
         "handler.userLoginRequest": {
             "type": "object",
             "properties": {
@@ -163,18 +328,12 @@ var doc = `{
             "properties": {
                 "user": {
                     "type": "object",
-                    "required": [
-                        "token"
-                    ],
                     "properties": {
                         "email": {
                             "type": "string"
                         },
                         "role": {
-                            "type": "string"
-                        },
-                        "token": {
-                            "type": "string"
+                            "type": "integer"
                         },
                         "username": {
                             "type": "string"
