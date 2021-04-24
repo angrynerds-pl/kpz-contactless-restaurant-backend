@@ -29,9 +29,9 @@ func (u *User) CheckPassword(plain string) bool {
 type RoleName int
 
 const (
-	admin RoleName = iota
-	customer
-	owner
-	manager
-	employee
+	Admin RoleName = iota
+	Customer
+	Owner
+	Manager
+	Employee
 )

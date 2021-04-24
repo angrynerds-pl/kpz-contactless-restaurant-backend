@@ -19,7 +19,7 @@ import (
 // @Success 200 {object} userResponse
 // @Failure default {object} utils.Error
 // @Router /users [post]
-// @Decaprated
+// @Deprecated
 func (h *Handler) SignUp(c echo.Context) error {
 	var u model.User
 	req := &userRegisterRequest{}
@@ -45,13 +45,14 @@ func (h *Handler) SignUp(c echo.Context) error {
 // @Param User body userRegisterRequest true "User credentials"
 // @Success 200 {object} userResponse
 // @Failure default {object} utils.Error
-// @Router /auth/owner [post]
+// @Router /auth/customer [post]
 func (h *Handler) SignUpCustomer(c echo.Context) error {
 	var u model.User
 	req := &userRegisterRequest{}
 	if err := req.bind(c, &u); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
+	u.Role = model.Customer
 	if err := h.userStore.Create(&u); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
@@ -78,16 +79,26 @@ func (h *Handler) SignUpOwner(c echo.Context) error {
 	if err := req.bind(c, &u); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
+	u.Role = model.Owner
 
 	if err := h.userStore.Create(&u); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
-	rsp, err := newUserResponse(&u)
+
+	token, err := utils.GenerateJWT(u.ID, u.Role)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	return c.JSON(http.StatusCreated, rsp)
+	return c.JSON(http.StatusOK, map[string]string{
+		"token": token,
+	})
 }
+
+//rsp, err := newUserResponse(&u)
+//if err != nil {
+//	return err
+//}
+//return c.JSON(http.StatusCreated, rsp)
 
 // Login
 // @Summary Login to service
@@ -114,11 +125,20 @@ func (h *Handler) Login(c echo.Context) error {
 	if !u.CheckPassword(req.User.Password) {
 		return c.JSON(http.StatusForbidden, utils.AccessForbidden())
 	}
-	rsp, err := newUserResponse(u)
+
+	token, err := utils.GenerateJWT(u.ID, u.Role)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	return c.JSON(http.StatusOK, rsp)
+	return c.JSON(http.StatusOK, map[string]string{
+		"token": token,
+	})
+
+	//rsp, err := newUserResponse(u)
+	//if err != nil {
+	//	return err
+	//}
+	//return c.JSON(http.StatusOK, rsp)
 }
 
 // CurrentUser
@@ -132,7 +152,12 @@ func (h *Handler) Login(c echo.Context) error {
 // @Failure default {object} utils.Error
 // @Router /users [get]
 func (h *Handler) CurrentUser(c echo.Context) error {
-	u, err := h.userStore.GetByID(userIDFromToken(c))
+	c.Logger().Info("aaaaaaaa")
+	userId, err := userIDFromToken(c)
+	if err != nil {
+		return err
+	}
+	u, err := h.userStore.GetByID(*userId)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -157,7 +182,11 @@ func (h *Handler) CurrentUser(c echo.Context) error {
 // @Failure default {object} utils.Error
 // @Router /users [put]
 func (h *Handler) UpdateUser(c echo.Context) error {
-	u, err := h.userStore.GetByID(userIDFromToken(c))
+	userId, err := userIDFromToken(c)
+	if err != nil {
+		return err
+	}
+	u, err := h.userStore.GetByID(*userId)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -180,7 +209,11 @@ func (h *Handler) UpdateUser(c echo.Context) error {
 }
 
 func (h *Handler) DeleteUser(c echo.Context) error {
-	u, err := h.userStore.GetByID(userIDFromToken(c))
+	userId, err := userIDFromToken(c)
+	if err != nil {
+		return err
+	}
+	u, err := h.userStore.GetByID(*userId)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -201,10 +234,16 @@ func (h *Handler) DeleteUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, rsp)
 }
 
-func userIDFromToken(c echo.Context) uuid.UUID {
+func userIDFromToken(c echo.Context) (*uuid.UUID, error) {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
-	id := claims["id"].(uuid.UUID)
 
-	return id
+	id := claims["id"].(string)
+
+	idUuid, err := uuid.FromString(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &idUuid, nil
 }
