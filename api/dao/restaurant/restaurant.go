@@ -6,8 +6,9 @@ import (
 )
 
 type Store interface {
-	GetByID(uuid uuid.UUID) (*model.Restaurant, error)
-	AddRestaurantToUser(userId uuid.UUID, restaurant *model.Restaurant) error
+	GetByID(userId, restaurantId uuid.UUID) (*model.Restaurant, error)
+	GetAll(userId uuid.UUID) ([]model.Restaurant, error)
+	AddRestaurantToUser(userId uuid.UUID, restaurant model.Restaurant) error
 	Update(*model.Restaurant) error
 	Delete(user *model.Restaurant) error
 }

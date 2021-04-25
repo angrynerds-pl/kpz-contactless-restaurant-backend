@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/db"
 	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/handler"
-	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/model"
 	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/router"
 	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/store"
 	"log"
@@ -44,8 +43,10 @@ func main() {
 		log.Fatalf("could not connect to db: %v", err)
 	}
 
-	if err = d.AutoMigrate(&model.User{}); err != nil {
+	err = db.AutoMigrate(d)
+	if err != nil {
 		log.Fatalf("Could not automigrate db. Err = %v", err)
+
 	}
 
 	us := store.NewUserStore(d)

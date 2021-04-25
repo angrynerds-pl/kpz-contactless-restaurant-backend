@@ -16,17 +16,36 @@ func NewRestaurantStore(db *gorm.DB) *RestaurantStore {
 	}
 }
 
-func (rs RestaurantStore) AddRestaurantToUser(userId uuid.UUID, restaurant *model.Restaurant) error {
+func (rs RestaurantStore) AddRestaurantToUser(userId uuid.UUID, restaurant model.Restaurant) error {
 	var u model.User
+	u.ID = userId
 
-	if err := rs.db.First(&u, userId).Association("Restaurants").Append(restaurant); err != nil {
+	if err := rs.db.Model(u).Association("Restaurants").Append(restaurant); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (rs RestaurantStore) GetByID(uuid uuid.UUID) (*model.Restaurant, error) {
-	panic("implement me")
+func (rs RestaurantStore) GetByID(userId, restaurantId uuid.UUID) (*model.Restaurant, error) {
+	u := model.User{}
+	u.ID = userId
+
+	err := rs.db.Model(u).Where("id = ?", restaurantId.String()).Association("Restaurants").Find(&u.Restaurants)
+	if err != nil {
+		return nil, err
+	}
+	return &u.Restaurants[0], nil
+}
+
+func (rs RestaurantStore) GetAll(userId uuid.UUID) ([]model.Restaurant, error) {
+	u := model.User{}
+	u.ID = userId
+
+	err := rs.db.Model(u).Association("Restaurants").Find(&u.Restaurants)
+	if err != nil {
+		return nil, err
+	}
+	return u.Restaurants, nil
 }
 
 func (rs RestaurantStore) Update(restaurant *model.Restaurant) error {

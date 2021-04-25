@@ -10,7 +10,7 @@ type CreateRestaurantRequest struct {
 		Name        string `param:"name" query:"name" form:"name" json:"name" xml:"name" validate:"required"`
 		Description string `param:"description" query:"description" form:"description" json:"description" xml:"description" validate:""`
 
-		Address Address
+		Address Address `param:"address" query:"address" form:"address" json:"address" xml:"address" validate:""`
 	} `json:"restaurant"`
 }
 
@@ -29,5 +29,12 @@ func (req *CreateRestaurantRequest) Bind(c echo.Context, r *model.Restaurant) er
 	r.Address.City = req.Restaurant.Address.City
 	r.Address.PostCode = req.Restaurant.Address.PostCode
 
+	return nil
+}
+
+type GetRestaurantRequest struct {
+}
+
+func (req *GetRestaurantRequest) Bind(c echo.Context, r *model.Restaurant) error {
 	return nil
 }
