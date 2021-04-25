@@ -22,8 +22,8 @@ func (h *Handler) Register(v1 *echo.Group) {
 
 	userRestaurants := user.Group("/restaurants", jwtMiddleware)
 	userRestaurants.POST("", h.CreateRestaurant)
-	userRestaurants.GET(":id", h.GetRestaurant)
+	userRestaurants.GET("/:id", h.GetRestaurant)
 	userRestaurants.GET("", h.Restaurants)
-	userRestaurants.PUT(":id", h.UpdateRestaurant)
-	userRestaurants.DELETE(":id", h.RemoveRestaurantFromUser)
+	userRestaurants.PUT("/:id", h.UpdateRestaurant)
+	userRestaurants.DELETE("/:id", h.RemoveRestaurantFromUser)
 }

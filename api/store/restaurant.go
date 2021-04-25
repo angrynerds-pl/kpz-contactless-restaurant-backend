@@ -17,10 +17,11 @@ func NewRestaurantStore(db *gorm.DB) *RestaurantStore {
 }
 
 func (rs RestaurantStore) AddRestaurantToUser(userId uuid.UUID, restaurant model.Restaurant) error {
-	var u model.User
+	//var u model.User
+	u := &model.User{}
 	u.ID = userId
 
-	if err := rs.db.Model(u).Association("Restaurants").Append(restaurant); err != nil {
+	if err := rs.db.Model(&u).Association("Restaurants").Append(&restaurant); err != nil {
 		return err
 	}
 	return nil

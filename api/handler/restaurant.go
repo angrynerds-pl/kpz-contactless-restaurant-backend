@@ -22,9 +22,10 @@ func (h *Handler) CreateRestaurant(c echo.Context) error {
 	}
 
 	var r model.Restaurant
+	var a model.Address
 	req := &requests.CreateRestaurantRequest{}
 
-	if err := req.Bind(c, &r); err != nil {
+	if err := req.Bind(c, &r, &a); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 
@@ -32,6 +33,7 @@ func (h *Handler) CreateRestaurant(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
+
 	if err := h.restaurantStore.AddRestaurantToUser(*userId, r); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
@@ -74,6 +76,10 @@ func (h *Handler) GetRestaurant(c echo.Context) error {
 	restaurant, err := h.restaurantStore.GetByID(*userId, restaurantId)
 	if err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
+	if restaurant == nil {
+		return c.JSON(http.StatusNotFound, utils.NotFound())
 	}
 
 	rsp, err := responses.NewRestaurantResponse(restaurant)
