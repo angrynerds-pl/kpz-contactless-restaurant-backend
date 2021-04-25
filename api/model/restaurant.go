@@ -11,8 +11,8 @@ type Restaurant struct {
 	QrCode    QrCode
 	Menus     []Menu
 
-	name        string
-	description string
+	Name        string
+	Description string
 }
 
 type QrCode struct {
