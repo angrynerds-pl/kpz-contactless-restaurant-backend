@@ -10,6 +10,16 @@ import (
 	"net/http"
 )
 
+// CreateRestaurant
+// @Summary Create Restaurant
+// @Description Create Restaurant
+// @Tags restaurants
+// @Accept  json
+// @Produce  json
+// @Param restaurant body requests.CreateRestaurantRequest true "Details of restaurant"
+// @Success 200 {object} responses.RestaurantResponse
+// @Failure default {object} utils.Error
+// @Router /users/restaurants/ [post]
 func (h *Handler) CreateRestaurant(c echo.Context) error {
 	role, err := userRoleFromToken(c)
 	if err != nil {
@@ -47,6 +57,16 @@ func (h *Handler) CreateRestaurant(c echo.Context) error {
 
 }
 
+// GetRestaurant
+// @Summary Get Restaurant by id
+// @Description Get Restaurant by id
+// @Tags restaurants
+// @Accept  json
+// @Produce  json
+// @Param id path string true "Id of restaurant"
+// @Success 200 {object} responses.RestaurantResponse
+// @Failure default {object} utils.Error
+// @Router /users/restaurants/{id} [get]
 func (h *Handler) GetRestaurant(c echo.Context) error {
 	role, err := userRoleFromToken(c)
 	if err != nil {
@@ -90,6 +110,15 @@ func (h *Handler) GetRestaurant(c echo.Context) error {
 	return c.JSON(http.StatusOK, rsp)
 }
 
+// Restaurant
+// @Summary Get all Restaurant
+// @Description Get all Restaurant
+// @Tags restaurants
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} responses.RestaurantResponse
+// @Failure default {object} utils.Error
+// @Router /users/restaurants/ [get]
 func (h *Handler) Restaurants(c echo.Context) error {
 	role, err := userRoleFromToken(c)
 	if err != nil {
@@ -124,10 +153,31 @@ func (h *Handler) Restaurants(c echo.Context) error {
 	return c.JSON(http.StatusOK, rsp)
 }
 
+// UpdateRestaurant
+// @Summary Update Restaurant
+// @Description Update Restaurant
+// @Tags restaurants
+// @Accept  json
+// @Produce  json
+// @Param id path string true "Id of restaurant"
+// @Param restaurant body requests.UpdateRestaurantRequest true "Details of restaurant"
+// @Success 200 {object} responses.RestaurantResponse
+// @Failure default {object} utils.Error
+// @Router /users/restaurants/{id} [put]
 func (h *Handler) UpdateRestaurant(c echo.Context) error {
 	panic("implement me")
 }
 
+// RemoveRestaurantFromUser
+// @Summary Remove restaurant from user
+// @Description Remove restaurant from user
+// @Tags restaurants
+// @Accept  json
+// @Produce  json
+// @Param id path string true "Id of restaurant"
+// @Success 200 {object} responses.RestaurantResponse
+// @Failure default {object} utils.Error
+// @Router /users/restaurants/{id} [delete]
 func (h *Handler) RemoveRestaurantFromUser(c echo.Context) error {
 	panic("implement me")
 }

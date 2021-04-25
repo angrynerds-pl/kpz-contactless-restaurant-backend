@@ -43,7 +43,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Guest user"
+                    "Auth"
                 ],
                 "summary": "Register new user with customer role",
                 "parameters": [
@@ -53,7 +53,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.userRegisterRequest"
+                            "$ref": "#/definitions/requests.UserRegisterRequest"
                         }
                     }
                 ],
@@ -61,7 +61,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.tokenResponse"
+                            "$ref": "#/definitions/responses.TokenResponse"
                         }
                     },
                     "default": {
@@ -83,7 +83,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Guest user"
+                    "Auth"
                 ],
                 "summary": "Register new user with owner role",
                 "parameters": [
@@ -93,7 +93,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.userRegisterRequest"
+                            "$ref": "#/definitions/requests.UserRegisterRequest"
                         }
                     }
                 ],
@@ -101,7 +101,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.tokenResponse"
+                            "$ref": "#/definitions/responses.TokenResponse"
                         }
                     },
                     "default": {
@@ -123,7 +123,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "Users"
                 ],
                 "summary": "Get User by id in token",
                 "parameters": [
@@ -133,7 +133,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.userLoginRequest"
+                            "$ref": "#/definitions/requests.UserLoginRequest"
                         }
                     }
                 ],
@@ -141,7 +141,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.userResponse"
+                            "$ref": "#/definitions/responses.UserResponse"
                         }
                     },
                     "default": {
@@ -161,7 +161,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "Users"
                 ],
                 "summary": "Update user by id  in token",
                 "parameters": [
@@ -171,7 +171,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.userLoginRequest"
+                            "$ref": "#/definitions/requests.UserLoginRequest"
                         }
                     }
                 ],
@@ -179,7 +179,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.userResponse"
+                            "$ref": "#/definitions/responses.UserResponse"
                         }
                     },
                     "default": {
@@ -199,7 +199,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Guest user"
+                    "Auth"
                 ],
                 "summary": "Register new user with owner role",
                 "deprecated": true,
@@ -210,7 +210,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.userRegisterRequest"
+                            "$ref": "#/definitions/requests.UserRegisterRequest"
                         }
                     }
                 ],
@@ -218,7 +218,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.userResponse"
+                            "$ref": "#/definitions/responses.UserResponse"
                         }
                     },
                     "default": {
@@ -240,7 +240,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Guest user"
+                    "Auth"
                 ],
                 "summary": "Login to service",
                 "parameters": [
@@ -250,7 +250,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.userLoginRequest"
+                            "$ref": "#/definitions/requests.UserLoginRequest"
                         }
                     }
                 ],
@@ -258,7 +258,193 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.tokenResponse"
+                            "$ref": "#/definitions/responses.TokenResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/restaurants/": {
+            "get": {
+                "description": "Get all Restaurant",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "restaurants"
+                ],
+                "summary": "Get all Restaurant",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.RestaurantResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create Restaurant",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "restaurants"
+                ],
+                "summary": "Create Restaurant",
+                "parameters": [
+                    {
+                        "description": "Details of restaurant",
+                        "name": "restaurant",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.CreateRestaurantRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.RestaurantResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/restaurants/{id}": {
+            "get": {
+                "description": "Get Restaurant by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "restaurants"
+                ],
+                "summary": "Get Restaurant by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id of restaurant",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.RestaurantResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Error"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update Restaurant",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "restaurants"
+                ],
+                "summary": "Update Restaurant",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id of restaurant",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Details of restaurant",
+                        "name": "restaurant",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.UpdateRestaurantRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.RestaurantResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Error"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Remove restaurant from user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "restaurants"
+                ],
+                "summary": "Remove restaurant from user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id of restaurant",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.RestaurantResponse"
                         }
                     },
                     "default": {
@@ -272,15 +458,45 @@ var doc = `{
         }
     },
     "definitions": {
-        "handler.tokenResponse": {
+        "requests.CreateRestaurantRequest": {
             "type": "object",
             "properties": {
-                "token": {
-                    "type": "string"
+                "restaurant": {
+                    "type": "object",
+                    "required": [
+                        "name"
+                    ],
+                    "properties": {
+                        "description": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        }
+                    }
                 }
             }
         },
-        "handler.userLoginRequest": {
+        "requests.UpdateRestaurantRequest": {
+            "type": "object",
+            "properties": {
+                "restaurant": {
+                    "type": "object",
+                    "required": [
+                        "name"
+                    ],
+                    "properties": {
+                        "description": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "requests.UserLoginRequest": {
             "type": "object",
             "properties": {
                 "user": {
@@ -300,7 +516,7 @@ var doc = `{
                 }
             }
         },
-        "handler.userRegisterRequest": {
+        "requests.UserRegisterRequest": {
             "type": "object",
             "properties": {
                 "user": {
@@ -323,7 +539,34 @@ var doc = `{
                 }
             }
         },
-        "handler.userResponse": {
+        "responses.RestaurantResponse": {
+            "type": "object",
+            "properties": {
+                "restaurant": {
+                    "type": "object",
+                    "required": [
+                        "name"
+                    ],
+                    "properties": {
+                        "description": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "responses.TokenResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "responses.UserResponse": {
             "type": "object",
             "properties": {
                 "user": {

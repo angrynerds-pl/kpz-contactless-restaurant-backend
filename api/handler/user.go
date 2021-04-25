@@ -12,11 +12,11 @@ import (
 // Signup
 // @Summary Register new user with owner role
 // @Description Register new user in server
-// @Tags Guest user
+// @Tags Auth
 // @Accept  json
 // @Produce  json
-// @Param User body userRegisterRequest true "User credentials"
-// @Success 200 {object} userResponse
+// @Param User body requests.UserRegisterRequest true "User credentials"
+// @Success 200 {object} responses.UserResponse
 // @Failure default {object} utils.Error
 // @Router /users [post]
 // @Deprecated
@@ -44,11 +44,11 @@ func (h *Handler) SignUp(c echo.Context) error {
 // Signup
 // @Summary Register new user with customer role
 // @Description Register new user in server
-// @Tags Guest user
+// @Tags Auth
 // @Accept  json
 // @Produce  json
-// @Param User body userRegisterRequest true "User credentials"
-// @Success 200 {object} tokenResponse
+// @Param User body requests.UserRegisterRequest true "User credentials"
+// @Success 200 {object} responses.TokenResponse
 // @Failure default {object} utils.Error
 // @Router /auth/customer [post]
 func (h *Handler) SignUpCustomer(c echo.Context) error {
@@ -76,11 +76,11 @@ func (h *Handler) SignUpCustomer(c echo.Context) error {
 // Signup
 // @Summary Register new user with owner role
 // @Description Register new user in server
-// @Tags Guest user
+// @Tags Auth
 // @Accept  json
 // @Produce  json
-// @Param User body userRegisterRequest true "User credentials"
-// @Success 200 {object} tokenResponse
+// @Param User body requests.UserRegisterRequest true "User credentials"
+// @Success 200 {object} responses.TokenResponse
 // @Failure default {object} utils.Error
 // @Router /auth/owner [post]
 func (h *Handler) SignUpOwner(c echo.Context) error {
@@ -109,11 +109,11 @@ func (h *Handler) SignUpOwner(c echo.Context) error {
 // Login
 // @Summary Login to service
 // @Description Login to service using given credentials
-// @Tags Guest user
+// @Tags Auth
 // @Accept  json
 // @Produce  json
-// @Param User body userLoginRequest true "User credentials"
-// @Success 200 {object} tokenResponse
+// @Param User body requests.UserLoginRequest true "User credentials"
+// @Success 200 {object} responses.TokenResponse
 // @Failure default {object} utils.Error
 // @Router /users/login [post]
 func (h *Handler) Login(c echo.Context) error {
@@ -147,11 +147,11 @@ func (h *Handler) Login(c echo.Context) error {
 // CurrentUser
 // @Summary Get User by id in token
 // @Description Get User by id in token
-// @Tags users
+// @Tags Users
 // @Accept  json
 // @Produce  json
-// @Param User body userLoginRequest true "User credentials"
-// @Success 200 {object} userResponse
+// @Param User body requests.UserLoginRequest true "User credentials"
+// @Success 200 {object} responses.UserResponse
 // @Failure default {object} utils.Error
 // @Router /users [get]
 func (h *Handler) CurrentUser(c echo.Context) error {
@@ -176,11 +176,11 @@ func (h *Handler) CurrentUser(c echo.Context) error {
 // UpdateUser
 // @Summary Update user by id  in token
 // @Description Update User by id in token. It can update
-// @Tags users
+// @Tags Users
 // @Accept  json
 // @Produce  json
-// @Param User body userLoginRequest true "User credentials"
-// @Success 200 {object} userResponse
+// @Param User body requests.UserLoginRequest true "User credentials"
+// @Success 200 {object} responses.UserResponse
 // @Failure default {object} utils.Error
 // @Router /users [put]
 func (h *Handler) UpdateUser(c echo.Context) error {

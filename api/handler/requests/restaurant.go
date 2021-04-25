@@ -31,3 +31,10 @@ type GetRestaurantRequest struct {
 func (req *GetRestaurantRequest) Bind(c echo.Context, r *model.Restaurant) error {
 	return nil
 }
+
+type UpdateRestaurantRequest struct {
+	Restaurant struct {
+		Name        string `param:"name" query:"name" form:"name" json:"name" xml:"name" validate:"required"`
+		Description string `param:"description" query:"description" form:"description" json:"description" xml:"description" validate:""`
+	} `json:"restaurant"`
+}
