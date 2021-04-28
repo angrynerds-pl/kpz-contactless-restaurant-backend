@@ -1,11 +1,30 @@
 basePath: /v1
 definitions:
-  handler.tokenResponse:
+  requests.CreateRestaurantRequest:
     properties:
-      token:
-        type: string
+      restaurant:
+        properties:
+          description:
+            type: string
+          name:
+            type: string
+        required:
+        - name
+        type: object
     type: object
-  handler.userLoginRequest:
+  requests.UpdateRestaurantRequest:
+    properties:
+      restaurant:
+        properties:
+          description:
+            type: string
+          name:
+            type: string
+        required:
+        - name
+        type: object
+    type: object
+  requests.UserLoginRequest:
     properties:
       user:
         properties:
@@ -18,7 +37,7 @@ definitions:
         - password
         type: object
     type: object
-  handler.userRegisterRequest:
+  requests.UserRegisterRequest:
     properties:
       user:
         properties:
@@ -33,7 +52,24 @@ definitions:
         - password
         type: object
     type: object
-  handler.userResponse:
+  responses.RestaurantResponse:
+    properties:
+      restaurant:
+        properties:
+          description:
+            type: string
+          name:
+            type: string
+        required:
+        - name
+        type: object
+    type: object
+  responses.TokenResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  responses.UserResponse:
     properties:
       user:
         properties:
@@ -76,21 +112,21 @@ paths:
         name: User
         required: true
         schema:
-          $ref: '#/definitions/handler.userRegisterRequest'
+          $ref: '#/definitions/requests.UserRegisterRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.tokenResponse'
+            $ref: '#/definitions/responses.TokenResponse'
         default:
           description: ""
           schema:
             $ref: '#/definitions/utils.Error'
       summary: Register new user with customer role
       tags:
-      - Guest user
+      - Auth
   /auth/owner:
     post:
       consumes:
@@ -102,21 +138,21 @@ paths:
         name: User
         required: true
         schema:
-          $ref: '#/definitions/handler.userRegisterRequest'
+          $ref: '#/definitions/requests.UserRegisterRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.tokenResponse'
+            $ref: '#/definitions/responses.TokenResponse'
         default:
           description: ""
           schema:
             $ref: '#/definitions/utils.Error'
       summary: Register new user with owner role
       tags:
-      - Guest user
+      - Auth
   /users:
     get:
       consumes:
@@ -128,21 +164,21 @@ paths:
         name: User
         required: true
         schema:
-          $ref: '#/definitions/handler.userLoginRequest'
+          $ref: '#/definitions/requests.UserLoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.userResponse'
+            $ref: '#/definitions/responses.UserResponse'
         default:
           description: ""
           schema:
             $ref: '#/definitions/utils.Error'
       summary: Get User by id in token
       tags:
-      - users
+      - Users
     post:
       consumes:
       - application/json
@@ -154,21 +190,21 @@ paths:
         name: User
         required: true
         schema:
-          $ref: '#/definitions/handler.userRegisterRequest'
+          $ref: '#/definitions/requests.UserRegisterRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.userResponse'
+            $ref: '#/definitions/responses.UserResponse'
         default:
           description: ""
           schema:
             $ref: '#/definitions/utils.Error'
       summary: Register new user with owner role
       tags:
-      - Guest user
+      - Auth
     put:
       consumes:
       - application/json
@@ -179,21 +215,21 @@ paths:
         name: User
         required: true
         schema:
-          $ref: '#/definitions/handler.userLoginRequest'
+          $ref: '#/definitions/requests.UserLoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.userResponse'
+            $ref: '#/definitions/responses.UserResponse'
         default:
           description: ""
           schema:
             $ref: '#/definitions/utils.Error'
       summary: Update user by id  in token
       tags:
-      - users
+      - Users
   /users/login:
     post:
       consumes:
@@ -205,21 +241,144 @@ paths:
         name: User
         required: true
         schema:
-          $ref: '#/definitions/handler.userLoginRequest'
+          $ref: '#/definitions/requests.UserLoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.tokenResponse'
+            $ref: '#/definitions/responses.TokenResponse'
         default:
           description: ""
           schema:
             $ref: '#/definitions/utils.Error'
       summary: Login to service
       tags:
-      - Guest user
+      - Auth
+  /users/restaurants/:
+    get:
+      consumes:
+      - application/json
+      description: Get all Restaurant
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.RestaurantResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/utils.Error'
+      summary: Get all Restaurant
+      tags:
+      - restaurants
+    post:
+      consumes:
+      - application/json
+      description: Create Restaurant
+      parameters:
+      - description: Details of restaurant
+        in: body
+        name: restaurant
+        required: true
+        schema:
+          $ref: '#/definitions/requests.CreateRestaurantRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.RestaurantResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/utils.Error'
+      summary: Create Restaurant
+      tags:
+      - restaurants
+  /users/restaurants/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove restaurant from user
+      parameters:
+      - description: Id of restaurant
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.RestaurantResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/utils.Error'
+      summary: Remove restaurant from user
+      tags:
+      - restaurants
+    get:
+      consumes:
+      - application/json
+      description: Get Restaurant by id
+      parameters:
+      - description: Id of restaurant
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.RestaurantResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/utils.Error'
+      summary: Get Restaurant by id
+      tags:
+      - restaurants
+    put:
+      consumes:
+      - application/json
+      description: Update Restaurant
+      parameters:
+      - description: Id of restaurant
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Details of restaurant
+        in: body
+        name: restaurant
+        required: true
+        schema:
+          $ref: '#/definitions/requests.UpdateRestaurantRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.RestaurantResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/utils.Error'
+      summary: Update Restaurant
+      tags:
+      - restaurants
 securityDefinitions:
   BasicAuth:
     type: basic

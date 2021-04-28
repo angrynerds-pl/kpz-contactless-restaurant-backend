@@ -12,7 +12,7 @@ type User struct {
 	Password string `param:"password" query:"password" form:"password" json:"password" xml:"password"`
 
 	Role        RoleName     `param:"role" query:"role" form:"role" json:"role" xml:"role"`
-	Restaurants []Restaurant `gorm:"foreignKey:OwnerId" param:"restaurants" query:"restaurants" form:"restaurants" json:"restaurants" xml:"restaurants" `
+	Restaurants []Restaurant `gorm:"foreignKey:OwnerID" param:"restaurants" query:"restaurants" form:"restaurants" json:"restaurants" xml:"restaurants" `
 }
 
 func (u *User) HashPassword(plain string) (string, error) {
@@ -42,18 +42,6 @@ func ToRoleName(s float64) RoleName {
 	return toID[s]
 }
 
-//func (s RoleName) String() string {
-//	return toString[s]
-//}
-//
-//var toString = map[RoleName]string{
-//	Admin:  "Admin",
-//	Customer:  "Customer",
-//	Owner: "Owner",
-//	Manager: "Manager",
-//	Employee: "Employee",
-//}
-
 var toID = map[float64]RoleName{
 	0: Admin,
 	1: Customer,
@@ -61,24 +49,3 @@ var toID = map[float64]RoleName{
 	3: Manager,
 	4: Employee,
 }
-
-//
-//// MarshalJSON marshals the enum as a quoted json string
-//func (s RoleName) MarshalJSON() ([]byte, error) {
-//	buffer := bytes.NewBufferString(`"`)
-//	buffer.WriteString(toString[s])
-//	buffer.WriteString(`"`)
-//	return buffer.Bytes(), nil
-//}
-//
-//// UnmarshalJSON unmashals a quoted json string to the enum value
-//func (s *RoleName) UnmarshalJSON(b []byte) error {
-//	var j string
-//	err := json.Unmarshal(b, &j)
-//	if err != nil {
-//		return err
-//	}
-//	// Note that if the string cannot be found then it will be set to the zero value, 'Created' in this case.
-//	*s = toID[j]
-//	return nil
-//}

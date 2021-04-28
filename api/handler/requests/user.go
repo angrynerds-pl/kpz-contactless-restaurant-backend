@@ -5,7 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type userUpdateRequest struct {
+type UserUpdateRequest struct {
 	User struct {
 		Username string `param:"username" query:"username" form:"username" json:"username" xml:"username validate:"required"`
 		Email    string `param:"email" query:"email" form:"email" json:"email" xml:"email" validate:"required,email"`
@@ -13,17 +13,17 @@ type userUpdateRequest struct {
 	} `json:"user"`
 }
 
-func NewUserUpdateRequest() *userUpdateRequest {
-	return new(userUpdateRequest)
+func NewUserUpdateRequest() *UserUpdateRequest {
+	return new(UserUpdateRequest)
 }
 
-func (r *userUpdateRequest) Populate(u *model.User) {
+func (r *UserUpdateRequest) Populate(u *model.User) {
 	r.User.Username = u.Username
 	r.User.Email = u.Email
 	r.User.Password = u.Password
 }
 
-func (r *userUpdateRequest) Bind(c echo.Context, u *model.User) error {
+func (r *UserUpdateRequest) Bind(c echo.Context, u *model.User) error {
 	if err := c.Bind(r); err != nil {
 		return err
 	}
@@ -84,13 +84,13 @@ func (r *UserLoginRequest) Bind(c echo.Context) error {
 	return nil
 }
 
-type userDeleteRequest struct {
+type UserDeleteRequest struct {
 }
 
-func NewUserDeleteRequest() *userDeleteRequest {
-	return &userDeleteRequest{}
+func NewUserDeleteRequest() *UserDeleteRequest {
+	return &UserDeleteRequest{}
 }
 
-func (r *userDeleteRequest) Bind(c echo.Context) error {
+func (r *UserDeleteRequest) Bind(c echo.Context) error {
 	return nil
 }
