@@ -21,10 +21,10 @@ func (h *Handler) CreateRestaurant(c echo.Context) error {
 
 	}
 
-	var r model.Restaurant
 	req := &requests.CreateRestaurantRequest{}
 
-	if err := req.Bind(c, &r); err != nil {
+	r, err := req.Bind(c)
+	if err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 
@@ -36,7 +36,7 @@ func (h *Handler) CreateRestaurant(c echo.Context) error {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 
-	rsp, err := responses.NewRestaurantResponse(&r)
+	rsp, err := responses.NewRestaurantResponse(r)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -119,9 +119,112 @@ func (h *Handler) Restaurants(c echo.Context) error {
 }
 
 func (h *Handler) UpdateRestaurant(c echo.Context) error {
-	panic("implement me")
+	role, err := userRoleFromToken(c)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+
+	if role != model.Owner {
+		return c.JSON(http.StatusInternalServerError, utils.AccessForbidden())
+	}
+
+	req := &requests.UpdateRestaurantRequest{}
+
+	r, err := req.Bind(c)
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
+	restaurantId, err := uuid.FromString(c.Param("id"))
+	if err != nil {
+		return err
+	}
+
+	userId, err := userIDFromToken(c)
+
+	r.ID = restaurantId
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	restaurant, err := h.restaurantStore.Update(*userId, r)
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
+	rsp, err := responses.NewRestaurantResponse(restaurant)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+
+	return c.JSON(http.StatusOK, rsp)
 }
 
 func (h *Handler) RemoveRestaurantFromUser(c echo.Context) error {
-	panic("implement me")
+	role, err := userRoleFromToken(c)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+
+	if role != model.Owner {
+		return c.JSON(http.StatusInternalServerError, utils.AccessForbidden())
+	}
+
+	var r model.Restaurant
+	req := &requests.DeleteRestaurantRequest{}
+
+	if err := req.Bind(c, &r); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
+	restaurantId, err := uuid.FromString(c.Param("id"))
+	if err != nil {
+		return err
+	}
+
+	userId, err := userIDFromToken(c)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	err = h.restaurantStore.DeleteRestaurantFromUser(*userId, restaurantId)
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"userId": userId.String(), "restaurantId": restaurantId.String()})
+}
+
+func (h *Handler) AddAddressToRestaurant(c echo.Context) error {
+	role, err := userRoleFromToken(c)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+
+	if role != model.Owner {
+		return c.JSON(http.StatusInternalServerError, utils.AccessForbidden())
+	}
+
+	req := &requests.AddAddressToRestaurantRequest{}
+
+	addr, err := req.Bind(c)
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
+	restaurantId, err := uuid.FromString(c.Param("id"))
+	if err != nil {
+		return err
+	}
+
+	userId, err := userIDFromToken(c)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	err = h.restaurantStore.Add(restaurantId, addr)
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"userId": userId.String(), "restaurantId": restaurantId.String()})
 }

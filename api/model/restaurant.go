@@ -6,7 +6,7 @@ type Restaurant struct {
 	Base
 	//CompanyId uuid.UUID
 	OwnerId uuid.UUID `gorm:"type:uuid"`
-	Address Address   `gorm:"foreignKey:RestaurantId"`
+	Address Address   `gorm:"foreignKey:RestaurantID"`
 	//QRCodeId  uuid.UUID
 	//QrCode    QrCode
 	//Menus     []Menu

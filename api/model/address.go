@@ -5,7 +5,7 @@ import uuid "github.com/satori/go.uuid"
 type Address struct {
 	Base
 
-	RestaurantId uuid.UUID
+	RestaurantID uuid.UUID `gorm:"unique"`
 
 	AddressLine1 string
 	AddressLine2 string

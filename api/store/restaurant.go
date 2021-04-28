@@ -4,6 +4,7 @@ import (
 	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/model"
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type RestaurantStore struct {
@@ -16,11 +17,16 @@ func NewRestaurantStore(db *gorm.DB) *RestaurantStore {
 	}
 }
 
-func (rs RestaurantStore) AddRestaurantToUser(userId uuid.UUID, restaurant model.Restaurant) error {
+func (rs RestaurantStore) AddRestaurantToUser(userId uuid.UUID, restaurant *model.Restaurant) error {
 	var u model.User
 	u.ID = userId
 
-	if err := rs.db.Model(u).Association("Restaurants").Append(restaurant); err != nil {
+	if err := rs.db.Model(&u).Association("Restaurants").Append(restaurant); err != nil {
+		return err
+	}
+
+	err := rs.db.Model(restaurant).Association("Address").Append(&restaurant.Address)
+	if err != nil {
 		return err
 	}
 	return nil
@@ -48,10 +54,56 @@ func (rs RestaurantStore) GetAll(userId uuid.UUID) ([]model.Restaurant, error) {
 	return u.Restaurants, nil
 }
 
-func (rs RestaurantStore) Update(restaurant *model.Restaurant) error {
-	panic("implement me")
+func (rs RestaurantStore) Update(userId uuid.UUID, restaurant *model.Restaurant) (*model.Restaurant, error) {
+	restToUpdate := &model.Restaurant{}
+	//restToUpdate.ID = restaurant.ID
+
+	u := &model.User{}
+	u.ID = userId
+
+	err := rs.db.Preload(clause.Associations).Model(u).Where("id = ?", restaurant.ID.String()).
+		Association("Restaurants").Find(&u.Restaurants)
+
+	err = rs.db.Preload("Restaurants").Preload("Restaurants.Address").Model(&u.Restaurants[0]).Updates(restaurant).Error
+	if err != nil {
+		return nil, err
+	}
+
+	addr := &model.Address{}
+	addr.RestaurantID = restaurant.ID
+	err = rs.db.Model(addr).Where("restaurant_id = ?", restaurant.ID.String()).Updates(restaurant.Address).Error
+	if err != nil {
+		return nil, err
+	}
+
+	err = rs.db.Preload("Address").First(restToUpdate, "id = ?", u.Restaurants[0].ID).Error
+	if err != nil {
+		return nil, err
+	}
+	return restToUpdate, nil
 }
 
-func (rs RestaurantStore) Delete(user *model.Restaurant) error {
-	panic("implement me")
+func (rs RestaurantStore) DeleteRestaurantFromUser(userId, restaurantId uuid.UUID) error {
+	user := &model.User{}
+	user.ID = userId
+
+	restaurant := &model.Restaurant{}
+	restaurant.ID = restaurantId
+
+	err := rs.db.Model(user).Association("Restaurants").Delete(restaurant)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (rs RestaurantStore) AddAddressToRestaurant(restaurantId uuid.UUID, addr *model.Address) (*model.Address, error) {
+	r := &model.Restaurant{}
+	r.ID = restaurantId
+
+	err := rs.db.Model(r).Association("Address").Replace(addr)
+	if err != nil {
+		return nil, err
+	}
+	return addr, nil
 }
