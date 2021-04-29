@@ -271,7 +271,7 @@ func (h *Handler) AddAddressToRestaurant(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	err = h.restaurantStore.Add(restaurantId, addr)
+	err = h.restaurantStore.AddAddressToRestaurant(restaurantId, addr)
 	if err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
