@@ -1,6 +1,8 @@
 package responses
 
-import "github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/model"
+import (
+	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/model"
+)
 
 type RestaurantResponse struct {
 	Restaurant struct {
@@ -32,4 +34,28 @@ func NewRestaurantsResponse(rs []model.Restaurant) (*RestaurantsResponse, error)
 		rsp.Restaurants = append(rsp.Restaurants, *restaurantRsp)
 	}
 	return rsp, nil
+}
+
+type UserRestaurantResponse struct {
+	RestaurantID string
+	UserID       string
+}
+
+func NewUserRestaurantResponse(userId, restaurantId string) (*UserRestaurantResponse, error) {
+	return &UserRestaurantResponse{
+		RestaurantID: restaurantId,
+		UserID:       userId,
+	}, nil
+}
+
+type RestaurantAddressResponse struct {
+	RestaurantID string
+	AddressID    string
+}
+
+func NewRestaurantAddressResponse(restaurantId, addressId string) (*RestaurantAddressResponse, error) {
+	return &RestaurantAddressResponse{
+		RestaurantID: restaurantId,
+		AddressID:    addressId,
+	}, nil
 }

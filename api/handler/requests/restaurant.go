@@ -45,8 +45,6 @@ type UpdateRestaurantRequest struct {
 	Restaurant struct {
 		Name        string `param:"name" query:"name" form:"name" json:"name" xml:"name" validate:"required"`
 		Description string `param:"description" query:"description" form:"description" json:"description" xml:"description" validate:""`
-
-		Address Address `param:"address" query:"address" form:"address" json:"address" xml:"address" validate:""`
 	} `json:"restaurant"`
 }
 
@@ -61,11 +59,6 @@ func (req *UpdateRestaurantRequest) Bind(c echo.Context) (*model.Restaurant, err
 
 	r.Name = req.Restaurant.Name
 	r.Description = req.Restaurant.Description
-
-	r.Address.AddressLine1 = req.Restaurant.Address.AddressLine1
-	r.Address.AddressLine2 = req.Restaurant.Address.AddressLine2
-	r.Address.City = req.Restaurant.Address.City
-	r.Address.PostCode = req.Restaurant.Address.PostCode
 
 	return &r, nil
 }

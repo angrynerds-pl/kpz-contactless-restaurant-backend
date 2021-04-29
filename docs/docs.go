@@ -73,6 +73,46 @@ var doc = `{
                 }
             }
         },
+        "/auth/login": {
+            "post": {
+                "description": "Login to service using given credentials",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login to service",
+                "parameters": [
+                    {
+                        "description": "User credentials",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.UserLoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.TokenResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/owner": {
             "post": {
                 "description": "Register new user in server",
@@ -115,6 +155,11 @@ var doc = `{
         },
         "/users": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Get User by id in token",
                 "consumes": [
                     "application/json"
@@ -126,17 +171,6 @@ var doc = `{
                     "Users"
                 ],
                 "summary": "Get User by id in token",
-                "parameters": [
-                    {
-                        "description": "User credentials",
-                        "name": "User",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.UserLoginRequest"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -230,46 +264,6 @@ var doc = `{
                 }
             }
         },
-        "/users/login": {
-            "post": {
-                "description": "Login to service using given credentials",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Login to service",
-                "parameters": [
-                    {
-                        "description": "User credentials",
-                        "name": "User",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.UserLoginRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.TokenResponse"
-                        }
-                    },
-                    "default": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/utils.Error"
-                        }
-                    }
-                }
-            }
-        },
         "/users/restaurants/": {
             "get": {
                 "description": "Get all Restaurant",
@@ -280,7 +274,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "restaurants"
+                    "Restaurants"
                 ],
                 "summary": "Get all Restaurant",
                 "responses": {
@@ -307,7 +301,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "restaurants"
+                    "Restaurants"
                 ],
                 "summary": "Create Restaurant",
                 "parameters": [
@@ -347,7 +341,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "restaurants"
+                    "Restaurants"
                 ],
                 "summary": "Get Restaurant by id",
                 "parameters": [
@@ -383,7 +377,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "restaurants"
+                    "Restaurants"
                 ],
                 "summary": "Update Restaurant",
                 "parameters": [
@@ -428,7 +422,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "restaurants"
+                    "Restaurants"
                 ],
                 "summary": "Remove restaurant from user",
                 "parameters": [
@@ -444,7 +438,54 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/responses.RestaurantResponse"
+                            "$ref": "#/definitions/responses.UserRestaurantResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/restaurants/{id}/address": {
+            "put": {
+                "description": "Replace address Restaurant",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurants"
+                ],
+                "summary": "Replace address Restaurant",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id of restaurant",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Details of address",
+                        "name": "address",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.AddAddressToRestaurantRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.RestaurantAddressResponse"
                         }
                     },
                     "default": {
@@ -458,6 +499,31 @@ var doc = `{
         }
     },
     "definitions": {
+        "requests.AddAddressToRestaurantRequest": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "$ref": "#/definitions/requests.Address"
+                }
+            }
+        },
+        "requests.Address": {
+            "type": "object",
+            "properties": {
+                "address_line_1": {
+                    "type": "string"
+                },
+                "address_line_2": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "post_code": {
+                    "type": "string"
+                }
+            }
+        },
         "requests.CreateRestaurantRequest": {
             "type": "object",
             "properties": {
@@ -467,6 +533,9 @@ var doc = `{
                         "name"
                     ],
                     "properties": {
+                        "address": {
+                            "$ref": "#/definitions/requests.Address"
+                        },
                         "description": {
                             "type": "string"
                         },
@@ -539,6 +608,17 @@ var doc = `{
                 }
             }
         },
+        "responses.RestaurantAddressResponse": {
+            "type": "object",
+            "properties": {
+                "addressID": {
+                    "type": "string"
+                },
+                "restaurantID": {
+                    "type": "string"
+                }
+            }
+        },
         "responses.RestaurantResponse": {
             "type": "object",
             "properties": {
@@ -585,6 +665,17 @@ var doc = `{
                 }
             }
         },
+        "responses.UserRestaurantResponse": {
+            "type": "object",
+            "properties": {
+                "restaurantID": {
+                    "type": "string"
+                },
+                "userID": {
+                    "type": "string"
+                }
+            }
+        },
         "utils.Error": {
             "type": "object",
             "properties": {
@@ -598,6 +689,11 @@ var doc = `{
     "securityDefinitions": {
         "BasicAuth": {
             "type": "basic"
+        },
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     },
     "x-extension-openapi": {

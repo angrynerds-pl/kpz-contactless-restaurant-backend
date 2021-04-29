@@ -28,6 +28,9 @@ import (
 // @query.collection.format multi
 
 // @securityDefinitions.basic BasicAuth
+//@securityDefinitions.apikey Bearer
+//@in header
+//@name Authorization
 
 // @x-extension-openapi {"example": "value on a json format"}
 func main() {

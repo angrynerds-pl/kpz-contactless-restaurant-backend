@@ -115,7 +115,7 @@ func (h *Handler) SignUpOwner(c echo.Context) error {
 // @Param User body requests.UserLoginRequest true "User credentials"
 // @Success 200 {object} responses.TokenResponse
 // @Failure default {object} utils.Error
-// @Router /users/login [post]
+// @Router /auth/login [post]
 func (h *Handler) Login(c echo.Context) error {
 	req := &requests.UserLoginRequest{}
 	if err := req.Bind(c); err != nil {
@@ -150,10 +150,10 @@ func (h *Handler) Login(c echo.Context) error {
 // @Tags Users
 // @Accept  json
 // @Produce  json
-// @Param User body requests.UserLoginRequest true "User credentials"
 // @Success 200 {object} responses.UserResponse
 // @Failure default {object} utils.Error
 // @Router /users [get]
+// @Security Bearer
 func (h *Handler) CurrentUser(c echo.Context) error {
 	userId, err := userIDFromToken(c)
 	if err != nil {

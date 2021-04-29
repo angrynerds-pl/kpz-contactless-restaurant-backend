@@ -13,7 +13,7 @@ import (
 // CreateRestaurant
 // @Summary Create Restaurant
 // @Description Create Restaurant
-// @Tags restaurants
+// @Tags Restaurants
 // @Accept  json
 // @Produce  json
 // @Param restaurant body requests.CreateRestaurantRequest true "Details of restaurant"
@@ -42,7 +42,7 @@ func (h *Handler) CreateRestaurant(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	if err := h.restaurantStore.AddRestaurantToUser(*userId, r); err != nil {
+	if err := h.restaurantStore.AddRestaurantToUser(*userId, *r); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 
@@ -58,7 +58,7 @@ func (h *Handler) CreateRestaurant(c echo.Context) error {
 // GetRestaurant
 // @Summary Get Restaurant by id
 // @Description Get Restaurant by id
-// @Tags restaurants
+// @Tags Restaurants
 // @Accept  json
 // @Produce  json
 // @Param id path string true "Id of restaurant"
@@ -107,7 +107,7 @@ func (h *Handler) GetRestaurant(c echo.Context) error {
 // Restaurant
 // @Summary Get all Restaurant
 // @Description Get all Restaurant
-// @Tags restaurants
+// @Tags Restaurants
 // @Accept  json
 // @Produce  json
 // @Success 200 {object} responses.RestaurantResponse
@@ -150,7 +150,7 @@ func (h *Handler) Restaurants(c echo.Context) error {
 // UpdateRestaurant
 // @Summary Update Restaurant
 // @Description Update Restaurant
-// @Tags restaurants
+// @Tags Restaurants
 // @Accept  json
 // @Produce  json
 // @Param id path string true "Id of restaurant"
@@ -202,11 +202,11 @@ func (h *Handler) UpdateRestaurant(c echo.Context) error {
 // RemoveRestaurantFromUser
 // @Summary Remove restaurant from user
 // @Description Remove restaurant from user
-// @Tags restaurants
+// @Tags Restaurants
 // @Accept  json
 // @Produce  json
 // @Param id path string true "Id of restaurant"
-// @Success 200 {object} responses.RestaurantResponse
+// @Success 200 {object} responses.UserRestaurantResponse
 // @Failure default {object} utils.Error
 // @Router /users/restaurants/{id} [delete]
 func (h *Handler) RemoveRestaurantFromUser(c echo.Context) error {
@@ -241,9 +241,25 @@ func (h *Handler) RemoveRestaurantFromUser(c echo.Context) error {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 
-	return c.JSON(http.StatusOK, map[string]string{"userId": userId.String(), "restaurantId": restaurantId.String()})
+	rsp, err := responses.NewUserRestaurantResponse(restaurantId.String(), userId.String())
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+
+	return c.JSON(http.StatusOK, rsp)
 }
 
+// AddAddressToRestaurant
+// @Summary Replace address Restaurant
+// @Description Replace address Restaurant
+// @Tags Restaurants
+// @Accept  json
+// @Produce  json
+// @Param id path string true "Id of restaurant"
+// @Param address body requests.AddAddressToRestaurantRequest true "Details of address"
+// @Success 200 {object} responses.RestaurantAddressResponse
+// @Failure default {object} utils.Error
+// @Router /users/restaurants/{id}/address [PUT]
 func (h *Handler) AddAddressToRestaurant(c echo.Context) error {
 	role, err := userRoleFromToken(c)
 	if err != nil {
@@ -267,14 +283,22 @@ func (h *Handler) AddAddressToRestaurant(c echo.Context) error {
 	}
 
 	userId, err := userIDFromToken(c)
-
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	err = h.restaurantStore.AddAddressToRestaurant(restaurantId, addr)
+
+	addrDb, err := h.restaurantStore.AddAddressToRestaurant(*userId, restaurantId, addr)
 	if err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 
-	return c.JSON(http.StatusOK, map[string]string{"userId": userId.String(), "restaurantId": restaurantId.String()})
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	rsp, err := responses.NewRestaurantAddressResponse(restaurantId.String(), addrDb.ID.String())
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+
+	return c.JSON(http.StatusOK, rsp)
 }

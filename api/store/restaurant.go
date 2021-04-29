@@ -17,15 +17,15 @@ func NewRestaurantStore(db *gorm.DB) *RestaurantStore {
 	}
 }
 
-func (rs RestaurantStore) AddRestaurantToUser(userId uuid.UUID, restaurant *model.Restaurant) error {
+func (rs RestaurantStore) AddRestaurantToUser(userId uuid.UUID, restaurant model.Restaurant) error {
 	var u model.User
 	u.ID = userId
 
-	if err := rs.db.Model(&u).Association("Restaurants").Append(restaurant); err != nil {
+	if err := rs.db.Model(&u).Association("Restaurants").Append(&restaurant); err != nil {
 		return err
 	}
 
-	err := rs.db.Model(restaurant).Association("Address").Append(&restaurant.Address)
+	err := rs.db.Model(&restaurant).Association("Address").Replace(&restaurant.Address)
 	if err != nil {
 		return err
 	}
@@ -97,13 +97,13 @@ func (rs RestaurantStore) DeleteRestaurantFromUser(userId, restaurantId uuid.UUI
 	return nil
 }
 
-func (rs RestaurantStore) AddAddressToRestaurant(restaurantId uuid.UUID, addr *model.Address) error {
+func (rs RestaurantStore) AddAddressToRestaurant(userId, restaurantId uuid.UUID, addr *model.Address) (*model.Address, error) {
 	r := &model.Restaurant{}
 	r.ID = restaurantId
 
 	err := rs.db.Model(r).Association("Address").Replace(addr)
 	if err != nil {
-		return err
+		return addr, err
 	}
-	return nil
+	return addr, err
 }

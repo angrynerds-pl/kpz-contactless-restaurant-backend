@@ -26,4 +26,5 @@ func (h *Handler) Register(v1 *echo.Group) {
 	userRestaurants.GET("", h.Restaurants)
 	userRestaurants.PUT("/:id", h.UpdateRestaurant)
 	userRestaurants.DELETE("/:id", h.RemoveRestaurantFromUser)
+	userRestaurants.PUT("/:id/address", h.AddAddressToRestaurant)
 }
