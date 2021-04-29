@@ -12,5 +12,5 @@ type Store interface {
 	Update(uuid.UUID, *model.Restaurant) (*model.Restaurant, error)
 	DeleteRestaurantFromUser(userId, restaurantId uuid.UUID) error
 
-	AddAddressToRestaurant(restaurantId uuid.UUID, addr *model.Address) error
+	AddAddressToRestaurant(userId uuid.UUID, addr *model.Address) error
 }

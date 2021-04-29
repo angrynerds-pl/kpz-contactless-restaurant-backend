@@ -97,13 +97,13 @@ func (rs RestaurantStore) DeleteRestaurantFromUser(userId, restaurantId uuid.UUI
 	return nil
 }
 
-func (rs RestaurantStore) AddAddressToRestaurant(restaurantId uuid.UUID, addr *model.Address) (*model.Address, error) {
+func (rs RestaurantStore) AddAddressToRestaurant(restaurantId uuid.UUID, addr *model.Address) error {
 	r := &model.Restaurant{}
 	r.ID = restaurantId
 
 	err := rs.db.Model(r).Association("Address").Replace(addr)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return addr, nil
+	return nil
 }
