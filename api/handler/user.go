@@ -1,29 +1,29 @@
 package handler
 
 import (
+	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/handler/requests"
+	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/handler/responses"
 	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/model"
 	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/utils"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
-	uuid "github.com/satori/go.uuid"
 	"net/http"
 )
 
 // Signup
 // @Summary Register new user with owner role
 // @Description Register new user in server
-// @Tags Guest user
+// @Tags Auth
 // @Accept  json
 // @Produce  json
-// @Param User body userRegisterRequest true "User credentials"
-// @Success 200 {object} userResponse
+// @Param User body requests.UserRegisterRequest true "User credentials"
+// @Success 200 {object} responses.UserResponse
 // @Failure default {object} utils.Error
 // @Router /users [post]
 // @Deprecated
 func (h *Handler) SignUp(c echo.Context) error {
 	var u model.User
-	req := &userRegisterRequest{}
-	if err := req.bind(c, &u); err != nil {
+	req := &requests.UserRegisterRequest{}
+	if err := req.Bind(c, &u); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 	if err := h.userStore.Create(&u); err != nil {
@@ -34,9 +34,9 @@ func (h *Handler) SignUp(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	rsp, err := newTokenResponse(token)
+	rsp, err := responses.NewTokenResponse(token)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
 	return c.JSON(http.StatusOK, rsp)
 }
@@ -44,17 +44,17 @@ func (h *Handler) SignUp(c echo.Context) error {
 // Signup
 // @Summary Register new user with customer role
 // @Description Register new user in server
-// @Tags Guest user
+// @Tags Auth
 // @Accept  json
 // @Produce  json
-// @Param User body userRegisterRequest true "User credentials"
-// @Success 200 {object} tokenResponse
+// @Param User body requests.UserRegisterRequest true "User credentials"
+// @Success 200 {object} responses.TokenResponse
 // @Failure default {object} utils.Error
 // @Router /auth/customer [post]
 func (h *Handler) SignUpCustomer(c echo.Context) error {
 	var u model.User
-	req := &userRegisterRequest{}
-	if err := req.bind(c, &u); err != nil {
+	req := &requests.UserRegisterRequest{}
+	if err := req.Bind(c, &u); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 	u.Role = model.Customer
@@ -66,7 +66,7 @@ func (h *Handler) SignUpCustomer(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	rsp, err := newTokenResponse(token)
+	rsp, err := responses.NewTokenResponse(token)
 	if err != nil {
 		return err
 	}
@@ -76,17 +76,17 @@ func (h *Handler) SignUpCustomer(c echo.Context) error {
 // Signup
 // @Summary Register new user with owner role
 // @Description Register new user in server
-// @Tags Guest user
+// @Tags Auth
 // @Accept  json
 // @Produce  json
-// @Param User body userRegisterRequest true "User credentials"
-// @Success 200 {object} tokenResponse
+// @Param User body requests.UserRegisterRequest true "User credentials"
+// @Success 200 {object} responses.TokenResponse
 // @Failure default {object} utils.Error
 // @Router /auth/owner [post]
 func (h *Handler) SignUpOwner(c echo.Context) error {
 	var u model.User
-	req := &userRegisterRequest{}
-	if err := req.bind(c, &u); err != nil {
+	req := &requests.UserRegisterRequest{}
+	if err := req.Bind(c, &u); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 	u.Role = model.Owner
@@ -99,32 +99,26 @@ func (h *Handler) SignUpOwner(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	rsp, err := newTokenResponse(token)
+	rsp, err := responses.NewTokenResponse(token)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
 	return c.JSON(http.StatusOK, rsp)
 }
 
-//rsp, err := newUserResponse(&u)
-//if err != nil {
-//	return err
-//}
-//return c.JSON(http.StatusCreated, rsp)
-
 // Login
 // @Summary Login to service
 // @Description Login to service using given credentials
-// @Tags Guest user
+// @Tags Auth
 // @Accept  json
 // @Produce  json
-// @Param User body userLoginRequest true "User credentials"
-// @Success 200 {object} tokenResponse
+// @Param User body requests.UserLoginRequest true "User credentials"
+// @Success 200 {object} responses.TokenResponse
 // @Failure default {object} utils.Error
-// @Router /users/login [post]
+// @Router /auth/login [post]
 func (h *Handler) Login(c echo.Context) error {
-	req := &userLoginRequest{}
-	if err := req.bind(c); err != nil {
+	req := &requests.UserLoginRequest{}
+	if err := req.Bind(c); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 	u, err := h.userStore.GetByEmail(req.User.Email)
@@ -143,9 +137,9 @@ func (h *Handler) Login(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
 
-	rsp, err := newTokenResponse(token)
+	rsp, err := responses.NewTokenResponse(token)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
 	return c.JSON(http.StatusOK, rsp)
 }
@@ -153,17 +147,17 @@ func (h *Handler) Login(c echo.Context) error {
 // CurrentUser
 // @Summary Get User by id in token
 // @Description Get User by id in token
-// @Tags users
+// @Tags Users
 // @Accept  json
 // @Produce  json
-// @Param User body userLoginRequest true "User credentials"
-// @Success 200 {object} userResponse
+// @Success 200 {object} responses.UserResponse
 // @Failure default {object} utils.Error
 // @Router /users [get]
+// @Security Bearer
 func (h *Handler) CurrentUser(c echo.Context) error {
 	userId, err := userIDFromToken(c)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
 	u, err := h.userStore.GetByID(*userId)
 	if err != nil {
@@ -172,9 +166,9 @@ func (h *Handler) CurrentUser(c echo.Context) error {
 	if u == nil {
 		return c.JSON(http.StatusNotFound, utils.NotFound())
 	}
-	rsp, err := newUserResponse(u)
+	rsp, err := responses.NewUserResponse(u)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
 	return c.JSON(http.StatusOK, rsp)
 }
@@ -182,11 +176,11 @@ func (h *Handler) CurrentUser(c echo.Context) error {
 // UpdateUser
 // @Summary Update user by id  in token
 // @Description Update User by id in token. It can update
-// @Tags users
+// @Tags Users
 // @Accept  json
 // @Produce  json
-// @Param User body userLoginRequest true "User credentials"
-// @Success 200 {object} userResponse
+// @Param User body requests.UserLoginRequest true "User credentials"
+// @Success 200 {object} responses.UserResponse
 // @Failure default {object} utils.Error
 // @Router /users [put]
 func (h *Handler) UpdateUser(c echo.Context) error {
@@ -201,17 +195,17 @@ func (h *Handler) UpdateUser(c echo.Context) error {
 	if u == nil {
 		return c.JSON(http.StatusNotFound, utils.NotFound())
 	}
-	req := newUserUpdateRequest()
-	req.populate(u)
-	if err := req.bind(c, u); err != nil {
+	req := requests.NewUserUpdateRequest()
+	req.Populate(u)
+	if err := req.Bind(c, u); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 	if err := h.userStore.Update(u); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
-	rsp, err := newUserResponse(u)
+	rsp, err := responses.NewUserResponse(u)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
 	return c.JSON(http.StatusOK, rsp)
 }
@@ -228,30 +222,16 @@ func (h *Handler) DeleteUser(c echo.Context) error {
 	if u == nil {
 		return c.JSON(http.StatusNotFound, utils.NotFound())
 	}
-	req := newUserDeleteRequest()
-	if err = req.bind(c); err != nil {
+	req := requests.NewUserDeleteRequest()
+	if err = req.Bind(c); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 	if err = h.userStore.Delete(u); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
-	rsp, err := newUserResponse(u)
+	rsp, err := responses.NewUserResponse(u)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
 	return c.JSON(http.StatusOK, rsp)
-}
-
-func userIDFromToken(c echo.Context) (*uuid.UUID, error) {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-
-	id := claims["id"].(string)
-
-	idUuid, err := uuid.FromString(id)
-	if err != nil {
-		return nil, err
-	}
-
-	return &idUuid, nil
 }

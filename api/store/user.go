@@ -17,11 +17,12 @@ func NewUserStore(db *gorm.DB) *UserStore {
 }
 
 func (us *UserStore) GetByID(id uuid.UUID) (*model.User, error) {
-	var m model.User
-	if err := us.db.First(&m, id).Error; err != nil {
+	m := &model.User{}
+	m.ID = id
+	if err := us.db.First(m).Error; err != nil {
 		return nil, err
 	}
-	return &m, nil
+	return m, nil
 }
 
 func (us *UserStore) GetByEmail(e string) (*model.User, error) {

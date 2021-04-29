@@ -1,6 +1,7 @@
 package db
 
 import (
+	"github.com/angrynerds-pl/kpz-contactless-restaurant-backend/api/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -51,6 +52,10 @@ func New() (*gorm.DB, error) {
 
 func AutoMigrate(db *gorm.DB) error {
 	return db.AutoMigrate(
-		"public.users",
+		&model.User{},
+		&model.Restaurant{},
+		&model.Address{},
+		&model.QrCode{},
+		&model.Company{},
 	)
 }

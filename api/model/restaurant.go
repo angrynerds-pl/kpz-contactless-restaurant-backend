@@ -4,15 +4,15 @@ import uuid "github.com/satori/go.uuid"
 
 type Restaurant struct {
 	Base
-	CompanyId uuid.UUID
-	AddressId uuid.UUID
-	Address   Address
-	QRCodeId  uuid.UUID
-	QrCode    QrCode
-	Menus     []Menu
+	//CompanyId uuid.UUID
+	OwnerID uuid.UUID `gorm:"type:uuid"`
+	Address Address   `gorm:"foreignKey:RestaurantID"`
+	//QRCodeId  uuid.UUID
+	//QrCode    QrCode
+	//Menus     []Menu
 
-	name        string
-	description string
+	Name        string
+	Description string
 }
 
 type QrCode struct {

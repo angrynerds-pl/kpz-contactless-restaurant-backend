@@ -38,9 +38,12 @@ This is an example of how to list things you need to use the software and how to
   ```
   Install Docker for your system
   ```
-* Generate .env file 
-  ```sh
-  make generate env
+* Create .env file write
+  ```env
+  #DB_DSN="user=restaurant password=restaurant dbname=restaurant port=5432 sslmode=disable"
+
+  DB_DSN="host=PRIVATE-IP user=restaurant password=restaurant dbname=restaurant port=5432 sslmode=disable"
+  SECRET_KEY="XXXX" -> JUST ANY https://randomkeygen.com 256-bit WEP Keys
   ```
 
 
@@ -64,10 +67,7 @@ This is an example of how to list things you need to use the software and how to
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
-
+To use swagger run docker and go on https://PRIVATE-IP:8585/swagger/index.html
 
 
 <!-- LICENSE -->
