@@ -1,9 +1,27 @@
 basePath: /v1
 definitions:
+  requests.AddAddressToRestaurantRequest:
+    properties:
+      address:
+        $ref: '#/definitions/requests.Address'
+    type: object
+  requests.Address:
+    properties:
+      address_line_1:
+        type: string
+      address_line_2:
+        type: string
+      city:
+        type: string
+      post_code:
+        type: string
+    type: object
   requests.CreateRestaurantRequest:
     properties:
       restaurant:
         properties:
+          address:
+            $ref: '#/definitions/requests.Address'
           description:
             type: string
           name:
@@ -52,6 +70,13 @@ definitions:
         - password
         type: object
     type: object
+  responses.RestaurantAddressResponse:
+    properties:
+      addressID:
+        type: string
+      restaurantID:
+        type: string
+    type: object
   responses.RestaurantResponse:
     properties:
       restaurant:
@@ -80,6 +105,13 @@ definitions:
           username:
             type: string
         type: object
+    type: object
+  responses.UserRestaurantResponse:
+    properties:
+      restaurantID:
+        type: string
+      userID:
+        type: string
     type: object
   utils.Error:
     properties:
@@ -127,6 +159,32 @@ paths:
       summary: Register new user with customer role
       tags:
       - Auth
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login to service using given credentials
+      parameters:
+      - description: User credentials
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/requests.UserLoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.TokenResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/utils.Error'
+      summary: Login to service
+      tags:
+      - Auth
   /auth/owner:
     post:
       consumes:
@@ -158,13 +216,6 @@ paths:
       consumes:
       - application/json
       description: Get User by id in token
-      parameters:
-      - description: User credentials
-        in: body
-        name: User
-        required: true
-        schema:
-          $ref: '#/definitions/requests.UserLoginRequest'
       produces:
       - application/json
       responses:
@@ -176,6 +227,8 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/utils.Error'
+      security:
+      - Bearer: []
       summary: Get User by id in token
       tags:
       - Users
@@ -230,32 +283,6 @@ paths:
       summary: Update user by id  in token
       tags:
       - Users
-  /users/login:
-    post:
-      consumes:
-      - application/json
-      description: Login to service using given credentials
-      parameters:
-      - description: User credentials
-        in: body
-        name: User
-        required: true
-        schema:
-          $ref: '#/definitions/requests.UserLoginRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.TokenResponse'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/utils.Error'
-      summary: Login to service
-      tags:
-      - Auth
   /users/restaurants/:
     get:
       consumes:
@@ -274,7 +301,7 @@ paths:
             $ref: '#/definitions/utils.Error'
       summary: Get all Restaurant
       tags:
-      - restaurants
+      - Restaurants
     post:
       consumes:
       - application/json
@@ -299,7 +326,7 @@ paths:
             $ref: '#/definitions/utils.Error'
       summary: Create Restaurant
       tags:
-      - restaurants
+      - Restaurants
   /users/restaurants/{id}:
     delete:
       consumes:
@@ -317,14 +344,14 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/responses.RestaurantResponse'
+            $ref: '#/definitions/responses.UserRestaurantResponse'
         default:
           description: ""
           schema:
             $ref: '#/definitions/utils.Error'
       summary: Remove restaurant from user
       tags:
-      - restaurants
+      - Restaurants
     get:
       consumes:
       - application/json
@@ -348,7 +375,7 @@ paths:
             $ref: '#/definitions/utils.Error'
       summary: Get Restaurant by id
       tags:
-      - restaurants
+      - Restaurants
     put:
       consumes:
       - application/json
@@ -378,10 +405,45 @@ paths:
             $ref: '#/definitions/utils.Error'
       summary: Update Restaurant
       tags:
-      - restaurants
+      - Restaurants
+  /users/restaurants/{id}/address:
+    put:
+      consumes:
+      - application/json
+      description: Replace address Restaurant
+      parameters:
+      - description: Id of restaurant
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Details of address
+        in: body
+        name: address
+        required: true
+        schema:
+          $ref: '#/definitions/requests.AddAddressToRestaurantRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.RestaurantAddressResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/utils.Error'
+      summary: Replace address Restaurant
+      tags:
+      - Restaurants
 securityDefinitions:
   BasicAuth:
     type: basic
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
 x-extension-openapi:
   example: value on a json format
