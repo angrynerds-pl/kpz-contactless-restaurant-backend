@@ -40,9 +40,7 @@ This is an example of how to list things you need to use the software and how to
   ```
 * Create .env file write
   ```env
-  #DB_DSN="user=restaurant password=restaurant dbname=restaurant port=5432 sslmode=disable"
-
-  DB_DSN="host=PRIVATE-IP user=restaurant password=restaurant dbname=restaurant port=5432 sslmode=disable"
+  DB_DSN="host=PRIVATE-IP user=postgres password=postgres dbname=postgres port=5432 sslmode=disable"
   SECRET_KEY="XXXX" -> JUST ANY https://randomkeygen.com 256-bit WEP Keys
   ```
 
