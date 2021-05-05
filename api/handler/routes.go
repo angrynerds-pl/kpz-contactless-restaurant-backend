@@ -18,19 +18,22 @@ func (h *Handler) Register(v1 *echo.Group) {
 	user := v1.Group("/users", jwtMiddleware)
 	user.GET("", h.CurrentUser)
 	user.PUT("", h.UpdateUser)
+
 	user.DELETE("", h.DeleteUser)
 
-	userRestaurants := user.Group("/restaurants", jwtMiddleware)
-	userRestaurants.POST("", h.CreateRestaurant)
-	userRestaurants.GET("/:id", h.GetRestaurant)
-	userRestaurants.GET("", h.Restaurants)
-	userRestaurants.PUT("/:id", h.UpdateRestaurant)
-	userRestaurants.DELETE("/:id", h.RemoveRestaurantFromUser)
-	userRestaurants.PUT("/:id/address", h.AddAddressToRestaurant)
+	{
+		userRestaurants := user.Group("/restaurants", jwtMiddleware)
+		userRestaurants.POST("", h.CreateRestaurant)
+		userRestaurants.GET("/:id", h.GetRestaurant)
+		userRestaurants.GET("", h.Restaurants)
+		userRestaurants.PUT("/:id", h.UpdateRestaurant)
+		userRestaurants.DELETE("/:id", h.RemoveRestaurantFromUser)
+		userRestaurants.PUT("/:id/address", h.AddAddressToRestaurant)
+	}
 
 	// /users/restaurants/menus
 	foodRestaurants := userRestaurants.Group("/menus", jwtMiddleware)
-	foodRestaurants.POST("", h.AddFoodToMenu)
+	foodRestaurants.POST("/:menuId ", h.AddFoodToMenu)
 	foodRestaurants.GET("/:id", h.GetMenu)
 	foodRestaurants.DELETE("/:id", h.RemoveFoodFromMenu)
 

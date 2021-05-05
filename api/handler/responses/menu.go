@@ -1,16 +1,12 @@
 package responses
 
-type AddFoodToMenuResponse struct {
-	Food struct {
-		Name        string `param:"name" query:"name" form:"name" json:"name" xml:"name" validate:"required"`
-		Description string `param:"description" query:"description" form:"description" json:"description" xml:"description" validate:""`
+import uuid "github.com/satori/go.uuid"
 
-		Address Address `param:"address" query:"address" form:"address" json:"address" xml:"address" validate:""`
-	} `json:"restaurant"`
-}
-
-func (f AddFoodToMenuResponse) bind() {
-
+type FoodToMenuResponse struct {
+	MenuId uuid.UUID
+	Food   struct {
+		Name string
+	}
 }
 
 type FoodResponse struct {

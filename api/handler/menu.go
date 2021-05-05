@@ -30,9 +30,9 @@ func (h *Handler) AddFoodToMenu(c echo.Context) error {
 
 	}
 
-	req := &requests.CreateMenuRequest{}
+	req := requests.AddFoodToMenuRequest{}
 
-	r, err := req.Bind(c)
+	f, err := req.Bind(c)
 	if err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
@@ -41,11 +41,16 @@ func (h *Handler) AddFoodToMenu(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	if err := h.restaurantStore.CreateMenu(*userId, *r); err != nil {
+	if err := h.menuStore.AddFoodToMenu(*userId, f); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 
-	rsp, err := responses.NewRestaurantResponse(r)
+	rsp := responses.FoodToMenuResponse{
+		MenuId: menuId,
+		Food: struct {
+			Name string
+		}{Name: req.Food.Name},
+	}
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
