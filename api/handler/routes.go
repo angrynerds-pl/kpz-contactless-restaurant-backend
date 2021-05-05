@@ -27,4 +27,15 @@ func (h *Handler) Register(v1 *echo.Group) {
 	userRestaurants.PUT("/:id", h.UpdateRestaurant)
 	userRestaurants.DELETE("/:id", h.RemoveRestaurantFromUser)
 	userRestaurants.PUT("/:id/address", h.AddAddressToRestaurant)
+
+	menus := v1.Group("/menus", jwtMiddleware)
+	menus.POST("", h.CreateMenu)
+	menus.GET("/:id", h.GetMenu)
+	menus.GET("", h.Menus)
+	menus.PUT("/:id", h.UpdateMenu)
+	menus.DELETE("/:id", h.DeleteMenu)
+
+	foodMenus := menus.Group("/foods", jwtMiddleware)
+	foodMenus.POST("", h.AddFoodToMenu)
+	foodMenus.DELETE("/:id", h.RemoveFoodFromMenu)
 }
