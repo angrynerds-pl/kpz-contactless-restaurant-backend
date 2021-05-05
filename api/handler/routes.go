@@ -27,4 +27,11 @@ func (h *Handler) Register(v1 *echo.Group) {
 	userRestaurants.PUT("/:id", h.UpdateRestaurant)
 	userRestaurants.DELETE("/:id", h.RemoveRestaurantFromUser)
 	userRestaurants.PUT("/:id/address", h.AddAddressToRestaurant)
+
+	// /users/restaurants/menus
+	foodRestaurants := userRestaurants.Group("/menus", jwtMiddleware)
+	foodRestaurants.POST("", h.AddFoodToMenu)
+	foodRestaurants.GET("/:id", h.GetMenu)
+	foodRestaurants.DELETE("/:id", h.RemoveFoodFromMenu)
+
 }
