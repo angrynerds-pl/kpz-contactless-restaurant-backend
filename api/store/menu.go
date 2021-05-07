@@ -17,9 +17,9 @@ func NewMenuStore(db *gorm.DB) *MenuStore {
 	}
 }
 
-func (ms MenuStore) AddFoodToMenu(menuId uuid.UUID, food *model.Food) error {
+func (ms MenuStore) AddFoodToMenu(menu *model.Menu, food *model.Food) error {
 	var m model.Menu
-	m.ID = menuId
+	m.ID = menu.ID
 
 	err := ms.db.Model(&m).Association("Foods").Append(food)
 	if err != nil {
@@ -39,11 +39,14 @@ func (ms MenuStore) GetMenu(menuId uuid.UUID) (*model.Menu, error) {
 	return &m, nil
 }
 
-func (ms MenuStore) RemoveFoodFromMenu(menuId uuid.UUID, food *model.Food) error {
+func (ms MenuStore) RemoveFoodFromMenu(menuId uuid.UUID, foodId uuid.UUID) error {
 	var m model.Menu
 	m.ID = menuId
 
-	err := ms.db.Model(&m).Association("Foods").Delete(food)
+	var f model.Food
+	f.ID = foodId
+
+	err := ms.db.Model(&m).Association("Foods").Delete(f)
 	if err != nil {
 		return err
 	}

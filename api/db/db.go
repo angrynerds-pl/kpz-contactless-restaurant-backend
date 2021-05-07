@@ -57,5 +57,7 @@ func AutoMigrate(db *gorm.DB) error {
 		&model.Address{},
 		&model.QrCode{},
 		&model.Company{},
+		&model.Menu{},
+		&model.Food{},
 	)
 }

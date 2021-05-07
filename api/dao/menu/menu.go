@@ -6,7 +6,7 @@ import (
 )
 
 type Menu interface {
-	AddFoodToMenu(menuId uuid.UUID, food *model.Food) error
+	AddFoodToMenu(menu *model.Menu, food *model.Food) error
 	GetMenu(menuId uuid.UUID) (*model.Menu, error)
-	RemoveFoodFromMenu(menuId uuid.UUID, food *model.Food) error
+	RemoveFoodFromMenu(menuId uuid.UUID, foodId uuid.UUID) error
 }

@@ -6,8 +6,9 @@ import (
 
 type RestaurantResponse struct {
 	Restaurant struct {
-		Name        string `param:"name" query:"name" form:"name" json:"name" xml:"name" validate:"required"`
-		Description string `param:"description" query:"description" form:"description" json:"description" xml:"description" validate:""`
+		Name        string       `param:"name" query:"name" form:"name" json:"name" xml:"name" validate:"required"`
+		Description string       `param:"description" query:"description" form:"description" json:"description" xml:"description" validate:""`
+		Menu        MenuResponse `json:"menu"`
 	} `json:"restaurant"`
 }
 
@@ -15,6 +16,13 @@ func NewRestaurantResponse(r *model.Restaurant) (*RestaurantResponse, error) {
 	req := new(RestaurantResponse)
 	req.Restaurant.Name = r.Name
 	req.Restaurant.Description = r.Description
+
+	menu, err := NewMenuRestaurantResponse(&r.Menu)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Restaurant.Menu = *menu
 
 	return req, nil
 }

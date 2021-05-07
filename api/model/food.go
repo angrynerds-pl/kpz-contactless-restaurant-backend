@@ -1,15 +1,19 @@
 package model
 
+import uuid "github.com/satori/go.uuid"
+
 type Food struct {
 	Base
 	//CuisineTypeId uuid.UUID
 	FoodType    string
-	Name        string `gorm:"unique"`
+	Name        string
 	Description string
-	Price       string
+	Price       float64
 }
 
 type Menu struct {
 	Base
 	Foods []Food `gorm:"many2many:menu_foods;"`
+
+	RestaurantID uuid.UUID
 }

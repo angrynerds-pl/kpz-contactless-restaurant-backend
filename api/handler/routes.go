@@ -28,13 +28,20 @@ func (h *Handler) Register(v1 *echo.Group) {
 		userRestaurants.GET("", h.Restaurants)
 		userRestaurants.PUT("/:id", h.UpdateRestaurant)
 		userRestaurants.DELETE("/:id", h.RemoveRestaurantFromUser)
+
+		// Restaurant Address
 		userRestaurants.PUT("/:id/address", h.AddAddressToRestaurant)
+
+		// Restaurant Menu
+		userRestaurants.POST("/:id/menu", h.AddFoodToMenu)
+		userRestaurants.GET("/:id/menu", h.GetMenu)
+		userRestaurants.DELETE("/:id/menu/:foodId", h.RemoveFoodFromMenu)
 	}
 
-	// /users/restaurants/menus
-	foodRestaurants := userRestaurants.Group("/menus", jwtMiddleware)
-	foodRestaurants.POST("/:menuId ", h.AddFoodToMenu)
-	foodRestaurants.GET("/:id", h.GetMenu)
-	foodRestaurants.DELETE("/:id", h.RemoveFoodFromMenu)
+	//// /users/restaurants/menus
+	//foodRestaurants := userRestaurants.Group("/menus", jwtMiddleware)
+	//foodRestaurants.POST("/:menuId ", h.AddFoodToMenu)
+	//foodRestaurants.GET("/:id", h.GetMenu)
+	//foodRestaurants.DELETE("/:id", h.RemoveFoodFromMenu)
 
 }

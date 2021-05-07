@@ -316,6 +316,137 @@
                 }
             }
         },
+        "/users/restaurants/:id/menus/": {
+            "get": {
+                "description": "GetMenu",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurants",
+                    "Menus"
+                ],
+                "summary": "GetMenu Get menu using restaurantId",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id of restaurant",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.MenuResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "AddFoodToMenu",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurants",
+                    "Menus"
+                ],
+                "summary": "AddFoodToMenu Adds Food to Menu using RestaurantId and Food",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id of restaurant",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Details of food",
+                        "name": "restaurant",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.AddFoodToMenuRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.MenuResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/restaurants/:id/menus/:foodId/": {
+            "delete": {
+                "description": "RemoveFoodFromMenu",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurants",
+                    "Menus"
+                ],
+                "summary": "RemoveFoodFromMenu Removes food from Menu using restaurantId and foodId",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id of restaurant",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Id of food",
+                        "name": "foodId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.MenuResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/users/restaurants/{id}": {
             "get": {
                 "description": "Get Restaurant by id",
@@ -492,6 +623,28 @@
                 }
             }
         },
+        "requests.AddFoodToMenuRequest": {
+            "type": "object",
+            "properties": {
+                "food": {
+                    "type": "object",
+                    "properties": {
+                        "description": {
+                            "type": "string"
+                        },
+                        "food_type": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "price": {
+                            "type": "number"
+                        }
+                    }
+                }
+            }
+        },
         "requests.Address": {
             "type": "object",
             "properties": {
@@ -593,6 +746,40 @@
                 }
             }
         },
+        "responses.FoodResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "food_id": {
+                    "type": "string"
+                },
+                "food_type": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
+        "responses.MenuResponse": {
+            "type": "object",
+            "properties": {
+                "foods": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/responses.FoodResponse"
+                    }
+                },
+                "menuId": {
+                    "type": "string"
+                }
+            }
+        },
         "responses.RestaurantAddressResponse": {
             "type": "object",
             "properties": {
@@ -615,6 +802,9 @@
                     "properties": {
                         "description": {
                             "type": "string"
+                        },
+                        "menu": {
+                            "$ref": "#/definitions/responses.MenuResponse"
                         },
                         "name": {
                             "type": "string"
