@@ -29,14 +29,21 @@ func (rs RestaurantStore) AddRestaurantToUser(userId uuid.UUID, restaurant model
 	if err != nil {
 		return err
 	}
+
+	if rs.db.Model(&restaurant).Association("Menu").Replace(&model.Menu{
+		Foods: []model.Food{},
+	}) != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (rs RestaurantStore) GetByID(userId, restaurantId uuid.UUID) (*model.Restaurant, error) {
 	u := model.User{}
 	u.ID = userId
-
-	err := rs.db.Model(u).Where("id = ?", restaurantId.String()).Association("Restaurants").Find(&u.Restaurants)
+	err := rs.db.Model(u).Preload(clause.Associations).Preload("Menu.Foods").Where("id = ?", restaurantId.String()).Association("Restaurants").Find(&u.Restaurants)
+	//err := rs.db.Preload("Restaurants", "id = ?", restaurantId.String()).Preload("Restaurants.Menu").Find(&u).Error
 	if err != nil {
 		return nil, err
 	}

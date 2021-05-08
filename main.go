@@ -54,7 +54,8 @@ func main() {
 
 	us := store.NewUserStore(d)
 	rs := store.NewRestaurantStore(d)
-	h := handler.NewHandler(us, rs)
+	ms := store.NewMenuStore(d)
+	h := handler.NewHandler(us, rs, ms)
 	h.Register(v1)
 	r.Logger.Fatal(r.Start(":8585"))
 }

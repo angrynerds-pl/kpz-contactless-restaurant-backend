@@ -5,6 +5,20 @@ definitions:
       address:
         $ref: '#/definitions/requests.Address'
     type: object
+  requests.AddFoodToMenuRequest:
+    properties:
+      food:
+        properties:
+          description:
+            type: string
+          food_type:
+            type: string
+          name:
+            type: string
+          price:
+            type: number
+        type: object
+    type: object
   requests.Address:
     properties:
       address_line_1:
@@ -70,6 +84,28 @@ definitions:
         - password
         type: object
     type: object
+  responses.FoodResponse:
+    properties:
+      description:
+        type: string
+      food_id:
+        type: string
+      food_type:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  responses.MenuResponse:
+    properties:
+      foods:
+        items:
+          $ref: '#/definitions/responses.FoodResponse'
+        type: array
+      menuId:
+        type: string
+    type: object
   responses.RestaurantAddressResponse:
     properties:
       addressID:
@@ -83,6 +119,8 @@ definitions:
         properties:
           description:
             type: string
+          menu:
+            $ref: '#/definitions/responses.MenuResponse'
           name:
             type: string
         required:
@@ -327,6 +365,94 @@ paths:
       summary: Create Restaurant
       tags:
       - Restaurants
+  /users/restaurants/:id/menus/:
+    get:
+      consumes:
+      - application/json
+      description: GetMenu
+      parameters:
+      - description: Id of restaurant
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.MenuResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/utils.Error'
+      summary: GetMenu Get menu using restaurantId
+      tags:
+      - Restaurants
+      - Menus
+    post:
+      consumes:
+      - application/json
+      description: AddFoodToMenu
+      parameters:
+      - description: Id of restaurant
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Details of food
+        in: body
+        name: restaurant
+        required: true
+        schema:
+          $ref: '#/definitions/requests.AddFoodToMenuRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.MenuResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/utils.Error'
+      summary: AddFoodToMenu Adds Food to Menu using RestaurantId and Food
+      tags:
+      - Restaurants
+      - Menus
+  /users/restaurants/:id/menus/:foodId/:
+    delete:
+      consumes:
+      - application/json
+      description: RemoveFoodFromMenu
+      parameters:
+      - description: Id of restaurant
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Id of food
+        in: path
+        name: foodId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.MenuResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/utils.Error'
+      summary: RemoveFoodFromMenu Removes food from Menu using restaurantId and foodId
+      tags:
+      - Restaurants
+      - Menus
   /users/restaurants/{id}:
     delete:
       consumes:
