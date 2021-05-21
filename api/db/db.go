@@ -51,6 +51,24 @@ func New() (*gorm.DB, error) {
 //}
 
 func AutoMigrate(db *gorm.DB) error {
+	//tables := []interface{}{
+	//
+	//}
+
+	_ = db.Migrator().DropTable(
+		&model.User{},
+		&model.Restaurant{},
+		&model.Address{},
+		&model.QrCode{},
+		&model.Company{},
+		&model.Menu{},
+		&model.Food{},
+		&model.Order{},
+		&model.OrderRestaurantCustomer{},
+		"menu_foods",
+		"order_restaurant_customers",
+	)
+
 	return db.AutoMigrate(
 		&model.User{},
 		&model.Restaurant{},
@@ -59,5 +77,7 @@ func AutoMigrate(db *gorm.DB) error {
 		&model.Company{},
 		&model.Menu{},
 		&model.Food{},
+		&model.Order{},
+		&model.OrderRestaurantCustomer{},
 	)
 }
