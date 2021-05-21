@@ -9,6 +9,8 @@ type Food struct {
 	Name        string
 	Description string
 	Price       float64
+
+	OrderID uuid.UUID
 }
 
 type Menu struct {

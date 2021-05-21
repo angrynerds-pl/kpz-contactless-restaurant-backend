@@ -9,7 +9,8 @@ type Restaurant struct {
 	Address Address   `gorm:"foreignKey:RestaurantID"`
 	//QRCodeId  uuid.UUID
 	//QrCode    QrCode
-	Menu Menu `gorm:"foreignKey:RestaurantID"`
+	Menu                    Menu `gorm:"foreignKey:RestaurantID"`
+	OrderRestaurantCustomer []OrderRestaurantCustomer
 
 	Name        string
 	Description string

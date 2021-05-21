@@ -11,8 +11,9 @@ type User struct {
 	Email    string `param:"email" query:"email" form:"email" json:"email" xml:"email"`
 	Password string `param:"password" query:"password" form:"password" json:"password" xml:"password"`
 
-	Role        RoleName     `param:"role" query:"role" form:"role" json:"role" xml:"role"`
-	Restaurants []Restaurant `gorm:"foreignKey:OwnerID" param:"restaurants" query:"restaurants" form:"restaurants" json:"restaurants" xml:"restaurants" `
+	Role                    RoleName                  `param:"role" query:"role" form:"role" json:"role" xml:"role"`
+	Restaurants             []Restaurant              `gorm:"foreignKey:OwnerID" param:"restaurants" query:"restaurants" form:"restaurants" json:"restaurants" xml:"restaurants" `
+	OrderRestaurantCustomer []OrderRestaurantCustomer `gorm:"foreignKey:CustomerID"`
 }
 
 func (u *User) HashPassword(plain string) (string, error) {
